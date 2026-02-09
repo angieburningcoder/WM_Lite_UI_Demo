@@ -107,42 +107,45 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="py-6 sm:py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <div className="py-6 sm:py-8 relative">
+      {/* Background Elements */}
+      <div className="absolute top-20 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10" />
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">監控設定</h1>
-            <p className="text-gray-500 mt-1">自訂你的監控範圍與偏好</p>
+            <h1 className="text-3xl font-black text-white tracking-tight">監控設定 ⚙️</h1>
+            <p className="text-slate-400 mt-1 text-lg">自訂你的監控範圍與偏好</p>
           </div>
           {saved && (
-            <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
-              <Check className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold animate-bounce-slow">
+              <Check className="w-5 h-5 bg-emerald-500/20 rounded-full p-0.5" />
               已儲存
             </div>
           )}
         </div>
 
         {/* Info Banner */}
-        <Card className="mb-6 bg-blue-50 border-blue-100">
-          <p className="text-blue-800 text-sm">
-            設定會儲存在你的瀏覽器中（localStorage），週報會根據這些設定顯示對應內容。
+        <Card className="mb-6 bg-blue-900/20 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+          <p className="text-blue-200 text-sm font-medium">
+            💡 設定會儲存在你的瀏覽器中（localStorage），週報會根據這些設定顯示對應內容。
             這是 Demo 版本，不會實際影響監控範圍。
           </p>
         </Card>
 
         {/* Display Name */}
-        <Card className="mb-6">
-          <CardHeader title="顯示名稱" subtitle="在週報中顯示的稱呼" />
+        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
+          <CardHeader title="顯示名稱 👤" subtitle="在週報中顯示的稱呼" />
           <div className="flex gap-3">
             <input
               type="text"
               value={localName}
               onChange={(e) => setLocalName(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
               placeholder="輸入名稱"
             />
-            <Button onClick={handleSaveName}>
+            <Button onClick={handleSaveName} className="rounded-2xl shadow-lg shadow-cyan-500/20">
               <Save className="w-4 h-4" />
               儲存
             </Button>
@@ -150,21 +153,21 @@ export default function SettingsPage() {
         </Card>
 
         {/* Monitored Keywords */}
-        <Card className="mb-6">
+        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
           <CardHeader
-            title="監測關鍵字"
+            title="監測關鍵字 🔍"
             subtitle="我們會監測包含這些關鍵字的帳號"
           />
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-5">
             {settings.monitoredKeywords.map((keyword) => (
               <span
                 key={keyword}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-full text-sm border border-slate-600 shadow-lg shadow-black/20 hover:scale-105 transition-transform"
               >
                 {keyword}
                 <button
                   onClick={() => handleRemoveKeyword(keyword)}
-                  className="hover:text-red-500 transition-colors"
+                  className="hover:text-rose-400 transition-colors bg-white/10 rounded-full p-0.5 hover:bg-white/20"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -177,10 +180,10 @@ export default function SettingsPage() {
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddKeyword()}
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
               placeholder="新增關鍵字（品牌名、人名等）"
             />
-            <Button variant="outline" onClick={handleAddKeyword}>
+            <Button variant="outline" onClick={handleAddKeyword} className="rounded-2xl border-slate-600 hover:border-cyan-500 hover:text-cyan-400">
               <Plus className="w-4 h-4" />
               新增
             </Button>
@@ -188,8 +191,8 @@ export default function SettingsPage() {
         </Card>
 
         {/* Platforms */}
-        <Card className="mb-6">
-          <CardHeader title="監測平台" subtitle="選擇要監控的社群平台" />
+        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
+          <CardHeader title="監測平台 📱" subtitle="選擇要監控的社群平台" />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {allPlatforms.map((platform) => {
               const isSelected = settings.platforms.includes(platform);
@@ -198,10 +201,10 @@ export default function SettingsPage() {
                   key={platform}
                   onClick={() => handleTogglePlatform(platform)}
                   className={cn(
-                    'px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all',
+                    'px-4 py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-300 transform hover:scale-[1.02]',
                     isSelected
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      ? 'border-cyan-500 bg-cyan-950/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
+                      : 'border-slate-700 bg-slate-800/30 text-slate-400 hover:border-slate-500 hover:text-slate-200'
                   )}
                 >
                   {isSelected && <Check className="w-4 h-4 inline mr-1.5" />}
@@ -213,44 +216,44 @@ export default function SettingsPage() {
         </Card>
 
         {/* Notification Frequency */}
-        <Card className="mb-6">
-          <CardHeader title="通知頻率" subtitle="選擇接收通知的頻率" />
+        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
+          <CardHeader title="通知頻率 🔔" subtitle="選擇接收通知的頻率" />
           <div className="space-y-3">
             {frequencyOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => handleFrequencyChange(option.value)}
                 className={cn(
-                  'w-full flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all',
+                  'w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-300',
                   settings.notificationFrequency === option.value
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-cyan-500 bg-cyan-950/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                    : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
                 )}
               >
                 <div
                   className={cn(
-                    'w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5',
+                    'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
                     settings.notificationFrequency === option.value
-                      ? 'border-blue-500 bg-blue-500'
-                      : 'border-gray-300'
+                      ? 'border-cyan-500 bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]'
+                      : 'border-slate-600 bg-slate-800'
                   )}
                 >
                   {settings.notificationFrequency === option.value && (
-                    <Check className="w-3 h-3 text-white" />
+                    <Check className="w-3.5 h-3.5 text-black font-bold" />
                   )}
                 </div>
                 <div>
                   <p
                     className={cn(
-                      'font-medium',
+                      'font-bold text-lg',
                       settings.notificationFrequency === option.value
-                        ? 'text-blue-700'
-                        : 'text-gray-900'
+                        ? 'text-cyan-300'
+                        : 'text-slate-200'
                     )}
                   >
                     {option.label}
                   </p>
-                  <p className="text-sm text-gray-500">{option.description}</p>
+                  <p className="text-sm text-slate-400 mt-1">{option.description}</p>
                 </div>
               </button>
             ))}
@@ -258,9 +261,9 @@ export default function SettingsPage() {
         </Card>
 
         {/* Delegation Preference */}
-        <Card className="mb-6">
+        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
           <CardHeader
-            title="代管偏好"
+            title="代管偏好 🤝"
             subtitle="遇到問題時，你希望我們如何協助"
           />
           <div className="space-y-3">
@@ -269,36 +272,36 @@ export default function SettingsPage() {
                 key={option.value}
                 onClick={() => handleDelegationChange(option.value)}
                 className={cn(
-                  'w-full flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all',
+                  'w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-300',
                   settings.delegationPreference === option.value
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-purple-500 bg-purple-950/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]'
+                    : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
                 )}
               >
                 <div
                   className={cn(
-                    'w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5',
+                    'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
                     settings.delegationPreference === option.value
-                      ? 'border-blue-500 bg-blue-500'
-                      : 'border-gray-300'
+                      ? 'border-purple-500 bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.4)]'
+                      : 'border-slate-600 bg-slate-800'
                   )}
                 >
                   {settings.delegationPreference === option.value && (
-                    <Check className="w-3 h-3 text-white" />
+                    <Check className="w-3.5 h-3.5 text-white" />
                   )}
                 </div>
                 <div>
                   <p
                     className={cn(
-                      'font-medium',
+                      'font-bold text-lg',
                       settings.delegationPreference === option.value
-                        ? 'text-blue-700'
-                        : 'text-gray-900'
+                        ? 'text-purple-300'
+                        : 'text-slate-200'
                     )}
                   >
                     {option.label}
                   </p>
-                  <p className="text-sm text-gray-500">{option.description}</p>
+                  <p className="text-sm text-slate-400 mt-1">{option.description}</p>
                 </div>
               </button>
             ))}
@@ -306,13 +309,13 @@ export default function SettingsPage() {
         </Card>
 
         {/* Reset */}
-        <Card className="border-dashed">
+        <Card className="border-dashed border-slate-700 bg-transparent hover:border-slate-500 transition-colors">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-gray-900">重設為預設值</p>
-              <p className="text-sm text-gray-500">清除所有自訂設定</p>
+              <p className="font-bold text-white">重設為預設值</p>
+              <p className="text-sm text-slate-500">清除所有自訂設定</p>
             </div>
-            <Button variant="ghost" onClick={handleReset}>
+            <Button variant="ghost" onClick={handleReset} className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl">
               <RotateCcw className="w-4 h-4" />
               重設
             </Button>

@@ -24,15 +24,15 @@ export function CaseCard({ caseData, compact = false }: CaseCardProps) {
             <PlatformBadge platform={caseData.platform} size="sm" />
           </div>
 
-          <h3 className="font-medium text-gray-900 truncate">
+          <h3 className="font-medium text-white truncate">
             @{caseData.suspectedAccountName}
           </h3>
-          <p className="text-sm text-gray-500 truncate mt-0.5">
+          <p className="text-sm text-slate-400 truncate mt-0.5">
             {caseData.suspectedDisplayName}
           </p>
 
           {!compact && (
-            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-sm text-gray-500">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-sm text-slate-500">
               <span>相似度 {caseData.similarityScore}%</span>
               <span>{formatNumber(caseData.followers)} 追蹤者</span>
               <span>{formatRelativeTime(caseData.discoveredAt)}</span>
@@ -40,7 +40,7 @@ export function CaseCard({ caseData, compact = false }: CaseCardProps) {
           )}
 
           {!compact && caseData.reasons.length > 0 && (
-            <p className="text-sm text-gray-600 mt-3 line-clamp-2">
+            <p className="text-sm text-slate-400 mt-3 line-clamp-2">
               {caseData.reasons[0]}
             </p>
           )}
@@ -75,7 +75,7 @@ export function CaseList({ cases, emptyMessage = '目前沒有符合條件的案
   if (cases.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">{emptyMessage}</p>
+        <p className="text-slate-500">{emptyMessage}</p>
       </div>
     );
   }

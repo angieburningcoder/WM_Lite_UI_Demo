@@ -11,20 +11,27 @@ export function RiskBadge({ level, showLabel = true, size = 'md' }: RiskBadgePro
   const info = getRiskLevelInfo(level);
 
   const sizeClasses = {
-    sm: 'text-xs px-1.5 py-0.5',
-    md: 'text-sm px-2 py-0.5',
-    lg: 'text-base px-2.5 py-1',
+    sm: 'text-xs px-2 py-0.5',
+    md: 'text-sm px-3 py-1',
+    lg: 'text-base px-4 py-1.5',
+  };
+
+  // Override colors for dark theme "bouncy" look
+  const colorMap: Record<RiskLevel, string> = {
+    H: 'bg-rose-600 text-white shadow-[0_0_10px_rgba(225,29,72,0.6)] border-rose-500 font-bold',
+    M: 'bg-amber-500 text-black shadow-[0_0_10px_rgba(245,158,11,0.6)] border-amber-400 font-bold',
+    L: 'bg-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.6)] border-emerald-400 font-bold',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 font-medium rounded-full border',
-        info.color,
+        'inline-flex items-center gap-1.5 font-bold rounded-full border transition-transform hover:scale-105',
+        colorMap[level],
         sizeClasses[size]
       )}
     >
-      <span className={cn('w-1.5 h-1.5 rounded-full', info.dotColor)} />
+      <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", level === 'M' ? 'bg-black' : 'bg-white')} />
       {showLabel ? info.label : info.shortLabel}
     </span>
   );
@@ -37,17 +44,17 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
   const statusInfo = {
-    active: { label: '處理中', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-    pending: { label: '待處理', color: 'bg-gray-50 text-gray-700 border-gray-200' },
-    completed: { label: '已完成', color: 'bg-green-50 text-green-700 border-green-200' },
-    monitoring: { label: '監控中', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+    active: { label: '處理中', color: 'bg-blue-600 text-white border-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.4)]' },
+    pending: { label: '待處理', color: 'bg-slate-600 text-white border-slate-400' },
+    completed: { label: '已完成', color: 'bg-green-600 text-white border-green-400 shadow-[0_0_10px_rgba(22,163,74,0.4)]' },
+    monitoring: { label: '監控中', color: 'bg-purple-600 text-white border-purple-400 shadow-[0_0_10px_rgba(147,51,234,0.4)]' },
   };
 
   const info = statusInfo[status];
-  const sizeClasses = size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-sm px-2 py-0.5';
+  const sizeClasses = size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1';
 
   return (
-    <span className={cn('inline-flex items-center font-medium rounded-full border', info.color, sizeClasses)}>
+    <span className={cn('inline-flex items-center font-bold rounded-full border transition-transform hover:scale-105', info.color, sizeClasses)}>
       {info.label}
     </span>
   );
@@ -60,17 +67,17 @@ interface PlatformBadgeProps {
 
 export function PlatformBadge({ platform, size = 'md' }: PlatformBadgeProps) {
   const platformColors: Record<string, string> = {
-    Instagram: 'bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 border-purple-200',
-    Facebook: 'bg-blue-50 text-blue-700 border-blue-200',
-    TikTok: 'bg-gray-900 text-white border-gray-900',
-    Twitter: 'bg-sky-50 text-sky-700 border-sky-200',
+    Instagram: 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-pink-400 shadow-[0_0_10px_rgba(236,72,153,0.4)]',
+    Facebook: 'bg-blue-600 text-white border-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.4)]',
+    TikTok: 'bg-slate-700 text-white border-slate-500 shadow-[0_0_10px_rgba(0,0,0,0.4)]',
+    Twitter: 'bg-sky-500 text-white border-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.4)]',
   };
 
-  const color = platformColors[platform] || 'bg-gray-50 text-gray-700 border-gray-200';
-  const sizeClasses = size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-sm px-2 py-0.5';
+  const color = platformColors[platform] || 'bg-slate-600 text-white border-slate-500';
+  const sizeClasses = size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1';
 
   return (
-    <span className={cn('inline-flex items-center font-medium rounded-full border', color, sizeClasses)}>
+    <span className={cn('inline-flex items-center font-bold rounded-full border transition-transform hover:scale-105', color, sizeClasses)}>
       {platform}
     </span>
   );

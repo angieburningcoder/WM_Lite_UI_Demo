@@ -23,10 +23,10 @@ export function FilterTabs({ options, value, onChange, className }: FilterTabsPr
           key={option.value}
           onClick={() => onChange(option.value)}
           className={cn(
-            'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200',
+            'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 border',
             value === option.value
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-blue-600 text-white shadow-sm border-blue-500'
+              : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-slate-200'
           )}
         >
           {option.label}
@@ -36,7 +36,7 @@ export function FilterTabs({ options, value, onChange, className }: FilterTabsPr
                 'text-xs px-1.5 py-0.5 rounded-full',
                 value === option.value
                   ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-500'
+                  : 'bg-slate-700 text-slate-400'
               )}
             >
               {option.count}

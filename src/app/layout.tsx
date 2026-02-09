@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="zh-TW">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>

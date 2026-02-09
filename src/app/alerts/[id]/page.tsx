@@ -11,7 +11,8 @@ import {
   Calendar,
   RefreshCw,
   ExternalLink,
-  FileText
+  FileText,
+  Shield // Added missing import
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { RiskBadge } from '@/components/ui/Badge';
@@ -65,32 +66,36 @@ export default function AlertDetailPage({ params }: PageProps) {
   const relatedCase = alert.caseId ? getCaseById(alert.caseId) : null;
 
   return (
-    <div className="py-6 sm:py-8">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <div className="py-6 sm:py-8 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Back Navigation */}
         <Link
           href="/alerts"
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           返回通知列表
         </Link>
 
         {/* Email-like Layout */}
-        <Card padding="none">
+        <Card padding="none" className="bg-slate-900/40 backdrop-blur border-slate-700/50 overflow-hidden">
           {/* Header */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-slate-700/50 bg-slate-800/20">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700">
                 {getAlertIcon(alert.type)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="text-sm text-gray-500">{getAlertTypeLabel(alert.type)}</span>
+                  <span className="text-sm text-slate-400 font-medium">{getAlertTypeLabel(alert.type)}</span>
                   {alert.riskLevel && <RiskBadge level={alert.riskLevel} size="sm" />}
                 </div>
-                <h1 className="text-xl font-bold text-gray-900 mb-1">{alert.title}</h1>
-                <p className="text-sm text-gray-500">
+                <h1 className="text-xl font-bold text-white mb-1">{alert.title}</h1>
+                <p className="text-sm text-slate-500">
                   {formatDateTime(alert.createdAt)} · {formatRelativeTime(alert.createdAt)}
                 </p>
               </div>
@@ -99,54 +104,60 @@ export default function AlertDetailPage({ params }: PageProps) {
 
           {/* Body */}
           <div className="p-6">
-            <div className="prose prose-gray max-w-none">
-              <p className="text-gray-700 leading-relaxed mb-6">{alert.summary}</p>
+            <div className="prose prose-invert max-w-none">
+              <p className="text-slate-300 leading-relaxed mb-6 text-lg">{alert.summary}</p>
 
               {/* Context-specific content */}
               {alert.type === 'new_case' && relatedCase && (
-                <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                  <h3 className="font-semibold text-gray-900 mb-3">案件摘要</h3>
+                <div className="bg-slate-800/50 rounded-xl p-5 mb-6 border border-slate-700/50">
+                  <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-blue-400" />
+                    案件摘要
+                  </h3>
                   <dl className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <dt className="text-gray-500">疑似帳號</dt>
-                      <dd className="font-medium text-gray-900">@{relatedCase.suspectedAccountName}</dd>
+                    <div className="bg-slate-900/50 p-3 rounded-lg">
+                      <dt className="text-slate-500 mb-1">疑似帳號</dt>
+                      <dd className="font-bold text-white truncate">@{relatedCase.suspectedAccountName}</dd>
                     </div>
-                    <div>
-                      <dt className="text-gray-500">平台</dt>
-                      <dd className="font-medium text-gray-900">{relatedCase.platform}</dd>
+                    <div className="bg-slate-900/50 p-3 rounded-lg">
+                      <dt className="text-slate-500 mb-1">平台</dt>
+                      <dd className="font-medium text-white">{relatedCase.platform}</dd>
                     </div>
-                    <div>
-                      <dt className="text-gray-500">相似度</dt>
-                      <dd className="font-medium text-gray-900">{relatedCase.similarityScore}%</dd>
+                    <div className="bg-slate-900/50 p-3 rounded-lg">
+                      <dt className="text-slate-500 mb-1">相似度</dt>
+                      <dd className="font-bold text-white">{relatedCase.similarityScore}%</dd>
                     </div>
-                    <div>
-                      <dt className="text-gray-500">追蹤者</dt>
-                      <dd className="font-medium text-gray-900">{relatedCase.followers.toLocaleString()}</dd>
+                    <div className="bg-slate-900/50 p-3 rounded-lg">
+                      <dt className="text-slate-500 mb-1">追蹤者</dt>
+                      <dd className="font-medium text-white">{relatedCase.followers.toLocaleString()}</dd>
                     </div>
                   </dl>
                 </div>
               )}
 
               {alert.type === 'environment_change' && (
-                <div className="bg-amber-50 rounded-xl p-4 mb-6 border border-amber-100">
-                  <p className="text-amber-800 text-sm">
+                <div className="bg-amber-950/30 rounded-xl p-4 mb-6 border border-amber-500/30">
+                  <p className="text-amber-200 text-sm">
                     此為環境觀察資訊，僅供參考。我們持續為你監控風險變化，讓你掌握最新動態。
                   </p>
                 </div>
               )}
 
               {alert.type === 'weekly_summary' && (
-                <div className="bg-purple-50 rounded-xl p-4 mb-6 border border-purple-100">
-                  <p className="text-purple-800 text-sm">
+                <div className="bg-purple-950/30 rounded-xl p-4 mb-6 border border-purple-500/30">
+                  <p className="text-purple-200 text-sm">
                     這是你的每週監控摘要。我們每週都會為你整理重點，讓你快速了解本週狀況。
                   </p>
                 </div>
               )}
 
               {/* De-fear message */}
-              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <p className="text-blue-800 font-medium mb-1">有人在</p>
-                <p className="text-blue-600 text-sm">
+              <div className="bg-blue-950/30 rounded-xl p-4 border border-blue-500/30">
+                <p className="text-blue-300 font-bold mb-1 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  有人在
+                </p>
+                <p className="text-blue-200/80 text-sm">
                   {alert.riskLevel === 'H'
                     ? '這件事你不用慌，我們已經準備好協助你處理。'
                     : '我們持續為你盯守，有任何狀況會第一時間通知你。'}
@@ -156,18 +167,18 @@ export default function AlertDetailPage({ params }: PageProps) {
           </div>
 
           {/* Actions Footer */}
-          <div className="p-6 bg-gray-50 border-t border-gray-100">
+          <div className="p-6 bg-slate-950/30 border-t border-slate-700/50">
             <div className="flex flex-wrap gap-3">
               {relatedCase && (
                 <>
                   <Link href={`/cases/${relatedCase.id}`}>
-                    <Button>
+                    <Button className="shadow-lg shadow-blue-500/20">
                       <ExternalLink className="w-4 h-4" />
                       查看案件詳情
                     </Button>
                   </Link>
                   <Link href={`/evidence/${relatedCase.id}`}>
-                    <Button variant="outline">
+                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-400">
                       <FileText className="w-4 h-4" />
                       查看證據包
                     </Button>
@@ -176,7 +187,7 @@ export default function AlertDetailPage({ params }: PageProps) {
               )}
               {alert.type === 'weekly_summary' && (
                 <Link href="/report/weekly">
-                  <Button>
+                  <Button className="shadow-lg shadow-purple-500/20">
                     <Calendar className="w-4 h-4" />
                     查看完整週報
                   </Button>
@@ -184,7 +195,7 @@ export default function AlertDetailPage({ params }: PageProps) {
               )}
               {!relatedCase && alert.type !== 'weekly_summary' && (
                 <Link href="/report/weekly">
-                  <Button variant="outline">返回週報</Button>
+                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-400">返回週報</Button>
                 </Link>
               )}
             </div>

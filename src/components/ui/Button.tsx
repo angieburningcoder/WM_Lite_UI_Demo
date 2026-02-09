@@ -9,20 +9,20 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-offset-slate-900 active:scale-95';
 
     const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:bg-blue-800',
-      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 active:bg-gray-300',
-      outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500 active:bg-gray-100',
-      ghost: 'text-gray-600 hover:bg-gray-100 focus:ring-gray-500 active:bg-gray-200',
-      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 active:bg-red-800',
+      primary: 'bg-yellow-400 text-purple-900 hover:bg-yellow-300 hover:shadow-[0_0_25px_rgba(250,204,21,0.6)] focus:ring-yellow-400/50 font-bold tracking-wide border-2 border-transparent',
+      secondary: 'bg-slate-800/80 text-cyan-300 border-2 border-slate-600 hover:bg-slate-700 hover:text-cyan-200 hover:border-cyan-400/50 focus:ring-slate-500 backdrop-blur-sm',
+      outline: 'border-2 border-cyan-400/50 bg-transparent text-cyan-300 hover:bg-cyan-400/10 hover:border-cyan-300 focus:ring-cyan-400/50',
+      ghost: 'text-slate-300 hover:bg-slate-800 hover:text-white focus:ring-slate-500',
+      danger: 'bg-rose-500 text-white hover:bg-rose-400 hover:shadow-[0_0_20px_rgba(244,63,94,0.5)] focus:ring-rose-500 border-2 border-transparent',
     };
 
     const sizes = {
-      sm: 'text-sm px-3 py-1.5 gap-1.5',
-      md: 'text-sm px-4 py-2 gap-2',
-      lg: 'text-base px-5 py-2.5 gap-2',
+      sm: 'text-sm px-4 py-1.5 gap-1.5',
+      md: 'text-base px-6 py-2.5 gap-2',
+      lg: 'text-lg px-8 py-3.5 gap-2.5',
     };
 
     return (
@@ -33,7 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && (
-          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
             <circle
               className="opacity-25"
               cx="12"
