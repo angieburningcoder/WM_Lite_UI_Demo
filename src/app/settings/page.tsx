@@ -18,7 +18,7 @@ const frequencyOptions: { value: NotificationFrequency; label: string; descripti
 
 const delegationOptions: { value: DelegationPreference; label: string; description: string; priceNote: string }[] = [
   { value: 'self_only', label: '只要教學', description: '我想自己處理偽冒案件，請給我步驟指引', priceNote: '' },
-  { value: 'delegate_when_needed', label: '想要 Watchmen 幫我代管', description: '遇到複雜偽冒情況時，請直接幫我處理', priceNote: '+NT$200/月起' },
+  { value: 'delegate_when_needed', label: '想要 Watchmen 幫我代管', description: '遇到複雜偽冒情況時，請直接幫我處理', priceNote: '+NT$599/月' },
 ];
 
 export default function SettingsPage() {
@@ -44,16 +44,12 @@ export default function SettingsPage() {
   const BASE_PRICE = 300;
   const KEYWORD_PRICE = 99;
   const PLATFORM_PRICE = 299;
-  const DELEGATION_BASE = 200;
+  const DELEGATION_PRICE = 599;
 
   const keywordCount = settings.monitoredKeywords.length;
   const platformCount = settings.platforms.length;
   const isDelegate = settings.delegationPreference === 'delegate_when_needed';
-
-  // Delegation: NT$200 base + 50% per extra platform (1平台=200, 2=300, 3=400)
-  const delegationPrice = isDelegate
-    ? Math.round(DELEGATION_BASE * (1 + (platformCount - 1) * 0.5))
-    : 0;
+  const delegationPrice = isDelegate ? DELEGATION_PRICE : 0;
 
   const monthlyPrice = BASE_PRICE + (keywordCount * KEYWORD_PRICE) + (platformCount * PLATFORM_PRICE) + delegationPrice;
   const yearlyPrice = monthlyPrice * 10;
@@ -468,11 +464,8 @@ export default function SettingsPage() {
               </div>
               {isDelegate && (
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-300">
-                    代管服務
-                    <span className="text-slate-500 ml-1">（{platformCount} 個平台）</span>
-                  </span>
-                  <span className="text-purple-300 font-bold">NT$ {delegationPrice.toLocaleString()}</span>
+                  <span className="text-slate-300">代管服務</span>
+                  <span className="text-purple-300 font-bold">NT$ {DELEGATION_PRICE}</span>
                 </div>
               )}
               <div className="border-t border-slate-700 pt-3 flex justify-between items-center">
