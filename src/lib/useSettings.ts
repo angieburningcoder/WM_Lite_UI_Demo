@@ -52,6 +52,18 @@ export function useSettings() {
     saveSettings({ notificationFrequency: frequency });
   }, [saveSettings]);
 
+  const updateChineseName = useCallback((name: string) => {
+    saveSettings({ chineseName: name });
+  }, [saveSettings]);
+
+  const updateEnglishName = useCallback((name: string) => {
+    saveSettings({ englishName: name });
+  }, [saveSettings]);
+
+  const updateBrandNames = useCallback((brands: string[]) => {
+    saveSettings({ brandNames: brands });
+  }, [saveSettings]);
+
   const updateDelegationPreference = useCallback((preference: DelegationPreference) => {
     saveSettings({ delegationPreference: preference });
   }, [saveSettings]);
@@ -73,6 +85,9 @@ export function useSettings() {
     updateKeywords,
     updatePlatforms,
     updateNotificationFrequency,
+    updateChineseName,
+    updateEnglishName,
+    updateBrandNames,
     updateDelegationPreference,
     resetSettings,
   };

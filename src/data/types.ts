@@ -8,6 +8,9 @@ export type DelegationPreference = 'self_only' | 'delegate_when_needed';
 
 export interface UserProfile {
   displayName: string;
+  chineseName: string;
+  englishName: string;
+  brandNames: string[];
   monitoredKeywords: string[];
   platforms: Platform[];
   timezone: string;

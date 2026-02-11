@@ -3,6 +3,9 @@ import { UserProfile, Case, Alert, WeeklyReport, EnvironmentSignal } from './typ
 // Default User Profile
 export const defaultUserProfile: UserProfile = {
   displayName: '陳品安',
+  chineseName: '陳品安',
+  englishName: 'Pin-An Chen',
+  brandNames: ['pinan_official'],
   monitoredKeywords: ['陳品安', 'Pin-An Chen', 'pinan_official'],
   platforms: ['Instagram', 'Facebook'],
   timezone: 'Asia/Taipei',
