@@ -71,8 +71,7 @@ export function getPlatformIcon(platform: string): string {
   const icons: Record<string, string> = {
     Instagram: 'instagram',
     Facebook: 'facebook',
-    TikTok: 'music',
-    Twitter: 'twitter',
+    Threads: 'at-sign',
   };
   return icons[platform] || 'globe';
 }

@@ -8,7 +8,7 @@ import { useSettings } from '@/lib/useSettings';
 import { Platform, NotificationFrequency, DelegationPreference } from '@/data/types';
 import { cn } from '@/lib/utils';
 
-const allPlatforms: Platform[] = ['Instagram', 'Facebook', 'TikTok', 'Twitter'];
+const allPlatforms: Platform[] = ['Instagram', 'Facebook', 'Threads'];
 
 const frequencyOptions: { value: NotificationFrequency; label: string; description: string }[] = [
   { value: 'immediate', label: '立即通知', description: '有新發現立即發送通知' },

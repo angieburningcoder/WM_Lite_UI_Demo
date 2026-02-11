@@ -69,8 +69,7 @@ export function PlatformBadge({ platform, size = 'md' }: PlatformBadgeProps) {
   const platformColors: Record<string, string> = {
     Instagram: 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-pink-400 shadow-[0_0_10px_rgba(236,72,153,0.4)]',
     Facebook: 'bg-blue-600 text-white border-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.4)]',
-    TikTok: 'bg-slate-700 text-white border-slate-500 shadow-[0_0_10px_rgba(0,0,0,0.4)]',
-    Twitter: 'bg-sky-500 text-white border-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.4)]',
+    Threads: 'bg-slate-800 text-white border-slate-500 shadow-[0_0_10px_rgba(0,0,0,0.4)]',
   };
 
   const color = platformColors[platform] || 'bg-slate-600 text-white border-slate-500';

@@ -1,7 +1,7 @@
 // Watchmen Lite - Type Definitions
 
 export type RiskLevel = 'H' | 'M' | 'L';
-export type Platform = 'Instagram' | 'Facebook' | 'TikTok' | 'Twitter';
+export type Platform = 'Instagram' | 'Facebook' | 'Threads';
 export type CaseStatus = 'detected' | 'evidence_prepared' | 'action_suggested' | 'handled' | 'monitoring';
 export type NotificationFrequency = 'immediate' | 'daily' | 'weekly';
 export type DelegationPreference = 'self_only' | 'delegate_when_needed';

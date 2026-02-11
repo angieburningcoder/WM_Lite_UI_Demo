@@ -397,17 +397,17 @@ export const cases: Case[] = [
   },
   {
     id: 'case-007',
-    platform: 'TikTok',
+    platform: 'Threads',
     suspectedAccountName: 'pinan_official_tw',
-    suspectedDisplayName: '陳品安官方TikTok',
-    suspectedUrl: 'https://tiktok.com/@pinan_official_tw',
+    suspectedDisplayName: '陳品安官方Threads',
+    suspectedUrl: 'https://threads.net/@pinan_official_tw',
     similarityScore: 85,
     followers: 3200,
     discoveredAt: '2024-01-09T15:00:00+08:00',
     riskLevel: 'M',
     reasons: [
       '使用「official」官方字樣',
-      '影片內容轉載自您的其他平台',
+      '貼文內容轉載自您的其他平台',
       '尚未發現詐騙行為',
     ],
     statusTimeline: [
@@ -420,7 +420,7 @@ export const cases: Case[] = [
       {
         type: 'self',
         steps: [
-          '確認您是否有計畫經營 TikTok',
+          '確認您是否有計畫經營 Threads',
           '若否，可進行版權申訴',
         ],
       },
@@ -431,7 +431,7 @@ export const cases: Case[] = [
         { id: 'chk-21', item: '使用 official 字樣', detected: true, detail: '帳號名稱包含 official' },
         { id: 'chk-22', item: '轉載內容', detected: true, detail: '影片轉載自其他平台' },
       ],
-      reportTextBlock: '此帳號使用 official 字樣，建議確認您的 TikTok 經營計畫後再決定處理方式。',
+      reportTextBlock: '此帳號使用 official 字樣，建議確認您的 Threads 經營計畫後再決定處理方式。',
     },
   },
   {
@@ -537,10 +537,10 @@ export const cases: Case[] = [
   },
   {
     id: 'case-011',
-    platform: 'Twitter',
+    platform: 'Threads',
     suspectedAccountName: 'pinan_tw',
     suspectedDisplayName: 'PinAn Taiwan',
-    suspectedUrl: 'https://twitter.com/pinan_tw',
+    suspectedUrl: 'https://threads.net/@pinan_tw',
     similarityScore: 70,
     followers: 542,
     discoveredAt: '2024-01-05T11:30:00+08:00',

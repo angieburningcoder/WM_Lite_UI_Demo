@@ -218,8 +218,7 @@ export default function StyleGuidePage() {
                 <div className="flex flex-wrap gap-3">
                   <PlatformBadge platform="Instagram" />
                   <PlatformBadge platform="Facebook" />
-                  <PlatformBadge platform="TikTok" />
-                  <PlatformBadge platform="Twitter" />
+                  <PlatformBadge platform="Threads" />
                 </div>
               </div>
 
