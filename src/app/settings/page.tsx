@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, X, Check, RotateCcw } from 'lucide-react';
+import { Save, Plus, X, Check, RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
@@ -37,6 +37,18 @@ export default function SettingsPage() {
   const [localName, setLocalName] = useState('');
   const [newKeyword, setNewKeyword] = useState('');
   const [saved, setSaved] = useState(false);
+  const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Pricing calculation
+  const BASE_PRICE = 300;
+  const KEYWORD_PRICE = 99;
+  const PLATFORM_PRICE = 299;
+
+  const keywordCount = settings.monitoredKeywords.length;
+  const platformCount = settings.platforms.length;
+  const monthlyPrice = BASE_PRICE + (keywordCount * KEYWORD_PRICE) + (platformCount * PLATFORM_PRICE);
+  const yearlyPrice = monthlyPrice * 10;
 
   useEffect(() => {
     if (isLoaded) {
@@ -90,6 +102,52 @@ export default function SettingsPage() {
   const showSaved = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  // Generate keyword suggestions based on display name and existing keywords
+  function generateSuggestions(): string[] {
+    const name = settings.displayName;
+    if (!name) return [];
+
+    const suggestions: string[] = [];
+
+    // Chinese name variations
+    suggestions.push(name);
+    suggestions.push(`${name}官方`);
+    suggestions.push(`${name}客服`);
+    suggestions.push(`${name}工作室`);
+    suggestions.push(`${name}粉絲團`);
+
+    // Try to find English name from existing keywords
+    const englishKeyword = settings.monitoredKeywords.find(k => /^[A-Za-z\s-]+$/.test(k));
+    if (englishKeyword) {
+      const lower = englishKeyword.toLowerCase().replace(/[\s-]+/g, '');
+      suggestions.push(englishKeyword);
+      suggestions.push(`${lower}_official`);
+      suggestions.push(`${lower}_tw`);
+      suggestions.push(`${lower}_backup`);
+      suggestions.push(`real_${lower}`);
+    }
+
+    // Try to find brand/handle from existing keywords (contains underscore or dot)
+    const handleKeyword = settings.monitoredKeywords.find(k => /[_.]/.test(k) && !/^(real_|.*_official$|.*_tw$|.*_backup$)/.test(k));
+    if (handleKeyword) {
+      suggestions.push(handleKeyword);
+      suggestions.push(`${handleKeyword}_backup`);
+      suggestions.push(`${handleKeyword}0`);
+    }
+
+    // Common impersonation suffixes for Chinese name
+    suggestions.push(`${name}代言`);
+    suggestions.push(`${name}合作`);
+
+    // Deduplicate and filter out already-added keywords
+    return [...new Set(suggestions)].filter(s => !settings.monitoredKeywords.includes(s));
+  }
+
+  const handleAddSuggestion = (keyword: string) => {
+    updateKeywords([...settings.monitoredKeywords, keyword]);
+    showSaved();
   };
 
   if (!isLoaded) {
@@ -188,6 +246,42 @@ export default function SettingsPage() {
               新增
             </Button>
           </div>
+
+          {/* Auto Suggest */}
+          <div className="mt-4">
+            <button
+              onClick={() => setShowSuggestions(!showSuggestions)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all"
+            >
+              <Sparkles className="w-4 h-4" />
+              自動推薦關鍵字
+              {showSuggestions ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+
+            {showSuggestions && (
+              <div className="mt-3 bg-slate-800/60 rounded-2xl p-4">
+                <p className="text-slate-400 text-xs mb-3">
+                  根據「{settings.displayName}」自動產生的常見冒名變體，點擊即可加入監控
+                </p>
+                {generateSuggestions().length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {generateSuggestions().map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => handleAddSuggestion(suggestion)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border border-amber-500/30 bg-amber-500/5 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400 transition-all hover:scale-105"
+                      >
+                        <Plus className="w-3 h-3" />
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-500 text-sm">所有推薦關鍵字都已加入</p>
+                )}
+              </div>
+            )}
+          </div>
         </Card>
 
         {/* Platforms */}
@@ -213,6 +307,68 @@ export default function SettingsPage() {
               );
             })}
           </div>
+        </Card>
+
+        {/* Pricing Estimate */}
+        <Card className="mb-6 bg-gradient-to-br from-cyan-950/60 to-slate-900/60 backdrop-blur border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+          <CardHeader
+            title="方案估算 💰"
+            subtitle="根據你的監控設定，即時估算每月費用"
+          />
+
+          {/* Price Display */}
+          <div className="text-center mb-6">
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-slate-400 text-lg">NT$</span>
+              <span className="text-5xl font-black text-white tracking-tight">{monthlyPrice.toLocaleString()}</span>
+              <span className="text-slate-400 text-lg">/月</span>
+            </div>
+            <p className="text-cyan-300/80 text-sm mt-2">
+              年繳 NT${yearlyPrice.toLocaleString()}/年（省 2 個月）
+            </p>
+          </div>
+
+          {/* Breakdown Toggle */}
+          <button
+            onClick={() => setShowPriceBreakdown(!showPriceBreakdown)}
+            className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-cyan-300 transition-colors mb-4"
+          >
+            查看費用明細
+            {showPriceBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {/* Breakdown Details */}
+          {showPriceBreakdown && (
+            <div className="bg-slate-800/60 rounded-2xl p-4 space-y-3 text-sm mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">基本月費</span>
+                <span className="text-white font-bold">NT$ {BASE_PRICE}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">
+                  關鍵字監控 × {keywordCount}
+                  <span className="text-slate-500 ml-1">（每組 NT${KEYWORD_PRICE}）</span>
+                </span>
+                <span className="text-white font-bold">NT$ {(keywordCount * KEYWORD_PRICE).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">
+                  平台監控 × {platformCount}
+                  <span className="text-slate-500 ml-1">（每個 NT${PLATFORM_PRICE}）</span>
+                </span>
+                <span className="text-white font-bold">NT$ {(platformCount * PLATFORM_PRICE).toLocaleString()}</span>
+              </div>
+              <div className="border-t border-slate-700 pt-3 flex justify-between items-center">
+                <span className="text-white font-bold">合計 /月</span>
+                <span className="text-cyan-300 font-black text-lg">NT$ {monthlyPrice.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Hint */}
+          <p className="text-center text-slate-500 text-xs">
+            新增或移除上方的關鍵字與平台，費用會即時調整
+          </p>
         </Card>
 
         {/* Notification Frequency */}
