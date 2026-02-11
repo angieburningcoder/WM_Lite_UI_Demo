@@ -16,9 +16,9 @@ const frequencyOptions: { value: NotificationFrequency; label: string; descripti
   { value: 'weekly', label: '週報', description: '每週一發送週報' },
 ];
 
-const delegationOptions: { value: DelegationPreference; label: string; description: string }[] = [
-  { value: 'self_only', label: '只要教學', description: '我想自己處理偽冒案件，請給我步驟指引' },
-  { value: 'delegate_when_needed', label: '想要 Watchmen 幫我代管', description: '遇到複雜偽冒情況時，請直接幫我處理' },
+const delegationOptions: { value: DelegationPreference; label: string; description: string; priceNote: string }[] = [
+  { value: 'self_only', label: '只要教學', description: '我想自己處理偽冒案件，請給我步驟指引', priceNote: '' },
+  { value: 'delegate_when_needed', label: '想要 Watchmen 幫我代管', description: '遇到複雜偽冒情況時，請直接幫我處理', priceNote: '+NT$200/月起' },
 ];
 
 export default function SettingsPage() {
@@ -44,10 +44,18 @@ export default function SettingsPage() {
   const BASE_PRICE = 300;
   const KEYWORD_PRICE = 99;
   const PLATFORM_PRICE = 299;
+  const DELEGATION_BASE = 200;
 
   const keywordCount = settings.monitoredKeywords.length;
   const platformCount = settings.platforms.length;
-  const monthlyPrice = BASE_PRICE + (keywordCount * KEYWORD_PRICE) + (platformCount * PLATFORM_PRICE);
+  const isDelegate = settings.delegationPreference === 'delegate_when_needed';
+
+  // Delegation: NT$200 base + 50% per extra platform (1平台=200, 2=300, 3=400)
+  const delegationPrice = isDelegate
+    ? Math.round(DELEGATION_BASE * (1 + (platformCount - 1) * 0.5))
+    : 0;
+
+  const monthlyPrice = BASE_PRICE + (keywordCount * KEYWORD_PRICE) + (platformCount * PLATFORM_PRICE) + delegationPrice;
   const yearlyPrice = monthlyPrice * 10;
 
   useEffect(() => {
@@ -309,68 +317,6 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        {/* Pricing Estimate */}
-        <Card className="mb-6 bg-gradient-to-br from-cyan-950/60 to-slate-900/60 backdrop-blur border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-          <CardHeader
-            title="方案估算 💰"
-            subtitle="根據你的監控設定，即時估算每月費用"
-          />
-
-          {/* Price Display */}
-          <div className="text-center mb-6">
-            <div className="flex items-baseline justify-center gap-1">
-              <span className="text-slate-400 text-lg">NT$</span>
-              <span className="text-5xl font-black text-white tracking-tight">{monthlyPrice.toLocaleString()}</span>
-              <span className="text-slate-400 text-lg">/月</span>
-            </div>
-            <p className="text-cyan-300/80 text-sm mt-2">
-              年繳 NT${yearlyPrice.toLocaleString()}/年（省 2 個月）
-            </p>
-          </div>
-
-          {/* Breakdown Toggle */}
-          <button
-            onClick={() => setShowPriceBreakdown(!showPriceBreakdown)}
-            className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-cyan-300 transition-colors mb-4"
-          >
-            查看費用明細
-            {showPriceBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-
-          {/* Breakdown Details */}
-          {showPriceBreakdown && (
-            <div className="bg-slate-800/60 rounded-2xl p-4 space-y-3 text-sm mb-4">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-300">基本月費</span>
-                <span className="text-white font-bold">NT$ {BASE_PRICE}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-300">
-                  關鍵字監控 × {keywordCount}
-                  <span className="text-slate-500 ml-1">（每組 NT${KEYWORD_PRICE}）</span>
-                </span>
-                <span className="text-white font-bold">NT$ {(keywordCount * KEYWORD_PRICE).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-300">
-                  平台監控 × {platformCount}
-                  <span className="text-slate-500 ml-1">（每個 NT${PLATFORM_PRICE}）</span>
-                </span>
-                <span className="text-white font-bold">NT$ {(platformCount * PLATFORM_PRICE).toLocaleString()}</span>
-              </div>
-              <div className="border-t border-slate-700 pt-3 flex justify-between items-center">
-                <span className="text-white font-bold">合計 /月</span>
-                <span className="text-cyan-300 font-black text-lg">NT$ {monthlyPrice.toLocaleString()}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Hint */}
-          <p className="text-center text-slate-500 text-xs">
-            新增或移除上方的關鍵字與平台，費用會即時調整
-          </p>
-        </Card>
-
         {/* Notification Frequency */}
         <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
           <CardHeader title="通知頻率 🔔" subtitle="選擇接收通知的頻率" />
@@ -446,22 +392,100 @@ export default function SettingsPage() {
                     <Check className="w-3.5 h-3.5 text-white" />
                   )}
                 </div>
-                <div>
-                  <p
-                    className={cn(
-                      'font-bold text-lg',
-                      settings.delegationPreference === option.value
-                        ? 'text-purple-300'
-                        : 'text-slate-200'
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p
+                      className={cn(
+                        'font-bold text-lg',
+                        settings.delegationPreference === option.value
+                          ? 'text-purple-300'
+                          : 'text-slate-200'
+                      )}
+                    >
+                      {option.label}
+                    </p>
+                    {option.priceNote && (
+                      <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
+                        {option.priceNote}
+                      </span>
                     )}
-                  >
-                    {option.label}
-                  </p>
+                  </div>
                   <p className="text-sm text-slate-400 mt-1">{option.description}</p>
                 </div>
               </button>
             ))}
           </div>
+        </Card>
+
+        {/* Pricing Estimate */}
+        <Card className="mb-6 bg-gradient-to-br from-cyan-950/60 to-slate-900/60 backdrop-blur border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+          <CardHeader
+            title="方案估算 💰"
+            subtitle="根據你的監控設定，即時估算每月費用"
+          />
+
+          {/* Price Display */}
+          <div className="text-center mb-6">
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-slate-400 text-lg">NT$</span>
+              <span className="text-5xl font-black text-white tracking-tight">{monthlyPrice.toLocaleString()}</span>
+              <span className="text-slate-400 text-lg">/月</span>
+            </div>
+            <p className="text-cyan-300/80 text-sm mt-2">
+              年繳 NT${yearlyPrice.toLocaleString()}/年（省 2 個月）
+            </p>
+          </div>
+
+          {/* Breakdown Toggle */}
+          <button
+            onClick={() => setShowPriceBreakdown(!showPriceBreakdown)}
+            className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-cyan-300 transition-colors mb-4"
+          >
+            查看費用明細
+            {showPriceBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {/* Breakdown Details */}
+          {showPriceBreakdown && (
+            <div className="bg-slate-800/60 rounded-2xl p-4 space-y-3 text-sm mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">基本月費</span>
+                <span className="text-white font-bold">NT$ {BASE_PRICE}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">
+                  關鍵字監控 × {keywordCount}
+                  <span className="text-slate-500 ml-1">（每組 NT${KEYWORD_PRICE}）</span>
+                </span>
+                <span className="text-white font-bold">NT$ {(keywordCount * KEYWORD_PRICE).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">
+                  平台監控 × {platformCount}
+                  <span className="text-slate-500 ml-1">（每個 NT${PLATFORM_PRICE}）</span>
+                </span>
+                <span className="text-white font-bold">NT$ {(platformCount * PLATFORM_PRICE).toLocaleString()}</span>
+              </div>
+              {isDelegate && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-300">
+                    代管服務
+                    <span className="text-slate-500 ml-1">（{platformCount} 個平台）</span>
+                  </span>
+                  <span className="text-purple-300 font-bold">NT$ {delegationPrice.toLocaleString()}</span>
+                </div>
+              )}
+              <div className="border-t border-slate-700 pt-3 flex justify-between items-center">
+                <span className="text-white font-bold">合計 /月</span>
+                <span className="text-cyan-300 font-black text-lg">NT$ {monthlyPrice.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Hint */}
+          <p className="text-center text-slate-500 text-xs">
+            調整上方的關鍵字、平台或代管偏好，費用會即時更新
+          </p>
         </Card>
 
         {/* Reset */}
