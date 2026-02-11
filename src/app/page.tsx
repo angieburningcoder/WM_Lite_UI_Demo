@@ -73,7 +73,7 @@ export default function HomePage() {
               Not just de-risk, but <span className="text-4xl text-yellow-300 glow-text inline-block hover:scale-110 transition-transform cursor-default">de-fear</span>.
             </p>
             <p className="text-xl text-slate-200 mb-12 max-w-3xl mx-auto animate-fade-in font-medium leading-relaxed" style={{ animationDelay: '0.3s' }}>
-              你不是沒用，是沒有人幫你。現在有人在，我們隨時守護你的數位身份。
+              你不需要獨自面對，因為現在有人在。我們隨時守護你的數位身份。
             </p>
 
             {/* CTAs */}

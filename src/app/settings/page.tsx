@@ -17,8 +17,8 @@ const frequencyOptions: { value: NotificationFrequency; label: string; descripti
 ];
 
 const delegationOptions: { value: DelegationPreference; label: string; description: string }[] = [
-  { value: 'self_only', label: '只要教學', description: '我想自己處理，請給我步驟指引' },
-  { value: 'delegate_when_needed', label: '需要時代管', description: '遇到複雜狀況時，請幫我處理' },
+  { value: 'self_only', label: '只要教學', description: '我想自己處理偽冒案件，請給我步驟指引' },
+  { value: 'delegate_when_needed', label: '想要 Watchmen 幫我代管', description: '遇到複雜偽冒情況時，請直接幫我處理' },
 ];
 
 export default function SettingsPage() {
