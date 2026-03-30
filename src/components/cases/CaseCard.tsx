@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ExternalLink, FileText, ChevronRight } from 'lucide-react';
 import { Case } from '@/data/types';
 import { Card } from '@/components/ui/Card';
-import { RiskBadge, PlatformBadge } from '@/components/ui/Badge';
+import { RiskBadge, PlatformBadge, StatusBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatRelativeTime, formatNumber, cn } from '@/lib/utils';
 
@@ -22,6 +22,7 @@ export function CaseCard({ caseData, compact = false }: CaseCardProps) {
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <RiskBadge level={caseData.riskLevel} size="sm" />
             <PlatformBadge platform={caseData.platform} size="sm" />
+            <StatusBadge status={caseData.currentStatus} size="sm" />
           </div>
 
           <h3 className="font-medium text-white truncate">

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Save, Plus, X, Check, RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Plus, X, Check, RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
-import { Platform, NotificationFrequency, DelegationPreference } from '@/data/types';
+import { Platform, NotificationFrequency } from '@/data/types';
 import { cn } from '@/lib/utils';
+import { BRAND_PRICE } from '@/lib/pricing';
+import { defaultUserProfile } from '@/data/mockData';
 
 const allPlatforms: Platform[] = ['Instagram', 'Facebook', 'Threads'];
 
@@ -16,64 +18,38 @@ const frequencyOptions: { value: NotificationFrequency; label: string; descripti
   { value: 'weekly', label: '週報', description: '每週一發送週報' },
 ];
 
-const delegationOptions: { value: DelegationPreference; label: string; description: string; priceNote: string }[] = [
-  { value: 'self_only', label: '只要教學', description: '我想自己處理偽冒案件，請給我步驟指引', priceNote: '' },
-  { value: 'delegate_when_needed', label: '想要 Watchmen 幫我代管', description: '遇到複雜偽冒情況時，請直接幫我處理', priceNote: '+NT$599/月' },
-];
-
 export default function SettingsPage() {
   const {
     settings,
     isLoaded,
     saveSettings,
-    updateDisplayName,
     updateChineseName,
     updateEnglishName,
     updateBrandNames,
+    updateFanPages,
     updateKeywords,
     updatePlatforms,
     updateNotificationFrequency,
-    updateDelegationPreference,
     resetSettings,
   } = useSettings();
 
-  const [localName, setLocalName] = useState('');
   const [localChineseName, setLocalChineseName] = useState('');
   const [localEnglishName, setLocalEnglishName] = useState('');
+  const [newFanPageName, setNewFanPageName] = useState('');
+  const [newFanPageUrl, setNewFanPageUrl] = useState('');
   const [newBrand, setNewBrand] = useState('');
   const [newKeyword, setNewKeyword] = useState('');
   const [saved, setSaved] = useState(false);
-  const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Pricing calculation
-  const BASE_PRICE = 300;
-  const KEYWORD_PRICE = 99;
-  const PLATFORM_PRICE = 299;
-  const BRAND_PRICE = 299;
-  const DELEGATION_PRICE = 599;
-
   const keywordCount = settings.monitoredKeywords.length;
-  const platformCount = settings.platforms.length;
-  const brandCount = settings.brandNames.length;
-  const isDelegate = settings.delegationPreference === 'delegate_when_needed';
-  const delegationPrice = isDelegate ? DELEGATION_PRICE : 0;
-
-  const monthlyPrice = BASE_PRICE + (keywordCount * KEYWORD_PRICE) + (platformCount * PLATFORM_PRICE) + (brandCount * BRAND_PRICE) + delegationPrice;
-  const yearlyPrice = monthlyPrice * 10;
 
   useEffect(() => {
     if (isLoaded) {
-      setLocalName(settings.displayName);
       setLocalChineseName(settings.chineseName);
       setLocalEnglishName(settings.englishName);
     }
-  }, [isLoaded, settings.displayName, settings.chineseName, settings.englishName]);
-
-  const handleSaveName = () => {
-    updateDisplayName(localName);
-    showSaved();
-  };
+  }, [isLoaded, settings.chineseName, settings.englishName]);
 
   const handleSaveChineseName = () => {
     updateChineseName(localChineseName);
@@ -82,6 +58,19 @@ export default function SettingsPage() {
 
   const handleSaveEnglishName = () => {
     updateEnglishName(localEnglishName);
+    showSaved();
+  };
+
+  const handleAddFanPage = () => {
+    if (!newFanPageName.trim()) return;
+    updateFanPages([...(settings.fanPages || []), { name: newFanPageName.trim(), url: newFanPageUrl.trim() }]);
+    setNewFanPageName('');
+    setNewFanPageUrl('');
+    showSaved();
+  };
+
+  const handleRemoveFanPage = (index: number) => {
+    updateFanPages((settings.fanPages || []).filter((_, i) => i !== index));
     showSaved();
   };
 
@@ -98,7 +87,10 @@ export default function SettingsPage() {
     showSaved();
   };
 
+  const MAX_KEYWORDS = 3;
+
   const handleAddKeyword = () => {
+    if (settings.monitoredKeywords.length >= MAX_KEYWORDS) return;
     if (newKeyword.trim() && !settings.monitoredKeywords.includes(newKeyword.trim())) {
       updateKeywords([...settings.monitoredKeywords, newKeyword.trim()]);
       setNewKeyword('');
@@ -125,16 +117,10 @@ export default function SettingsPage() {
     showSaved();
   };
 
-  const handleDelegationChange = (preference: DelegationPreference) => {
-    updateDelegationPreference(preference);
-    showSaved();
-  };
-
   const handleReset = () => {
     resetSettings();
-    setLocalName('陳品安');
-    setLocalChineseName('陳品安');
-    setLocalEnglishName('Pin-An Chen');
+    setLocalChineseName(defaultUserProfile.chineseName);
+    setLocalEnglishName(defaultUserProfile.englishName);
     showSaved();
   };
 
@@ -143,48 +129,29 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  // Generate keyword suggestions based on Chinese name, English name, and brand names
-  function generateSuggestions(): string[] {
-    const suggestions: string[] = [];
-    const cn = settings.chineseName;
-    const en = settings.englishName;
-
-    // Chinese name variations
-    if (cn) {
-      suggestions.push(cn);
-      suggestions.push(`${cn}官方`);
-      suggestions.push(`${cn}客服`);
-      suggestions.push(`${cn}工作室`);
-      suggestions.push(`${cn}粉絲團`);
-      suggestions.push(`${cn}代言`);
-      suggestions.push(`${cn}合作`);
+  // Memoized keyword suggestions based on Chinese name, English name, brand names, and fan pages
+  const suggestions = useMemo(() => {
+    const result: string[] = [];
+    const chName = settings.chineseName;
+    const enName = settings.englishName;
+    if (chName) {
+      result.push(chName, `${chName}官方`, `${chName}客服`, `${chName}工作室`, `${chName}粉絲團`, `${chName}代言`, `${chName}合作`);
     }
-
-    // English name variations
-    if (en) {
-      const lower = en.toLowerCase().replace(/[\s-]+/g, '');
-      suggestions.push(en);
-      suggestions.push(`${lower}_official`);
-      suggestions.push(`${lower}_tw`);
-      suggestions.push(`${lower}_backup`);
-      suggestions.push(`real_${lower}`);
+    if (enName) {
+      const lower = enName.toLowerCase().replace(/[\s-]+/g, '');
+      result.push(enName, `${lower}_official`, `${lower}_tw`, `${lower}_backup`, `real_${lower}`);
     }
-
-    // Brand name variations
-    settings.brandNames.forEach(brand => {
-      if (brand) {
-        suggestions.push(brand);
-        suggestions.push(`${brand}官方`);
-        suggestions.push(`${brand}_official`);
-        suggestions.push(`${brand}_backup`);
-      }
+    (settings.fanPages || []).forEach(fp => {
+      if (fp.name) result.push(fp.name, `${fp.name}_official`, `${fp.name}_backup`, `real_${fp.name}`);
     });
-
-    // Deduplicate and filter out already-added keywords
-    return [...new Set(suggestions)].filter(s => !settings.monitoredKeywords.includes(s));
-  }
+    settings.brandNames.forEach(brand => {
+      if (brand) result.push(brand, `${brand}官方`, `${brand}_official`, `${brand}_backup`);
+    });
+    return [...new Set(result)].filter(s => !settings.monitoredKeywords.includes(s));
+  }, [settings.chineseName, settings.englishName, settings.fanPages, settings.brandNames, settings.monitoredKeywords]);
 
   const handleAddSuggestion = (keyword: string) => {
+    if (settings.monitoredKeywords.length >= MAX_KEYWORDS) return;
     updateKeywords([...settings.monitoredKeywords, keyword]);
     showSaved();
   };
@@ -233,26 +200,11 @@ export default function SettingsPage() {
 
         {/* Identity Info */}
         <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
-          <CardHeader title="身份資料 👤" subtitle="用於產生監測關鍵字與週報顯示" />
-
-          {/* Display Name */}
-          <div className="mb-5">
-            <label className="block text-sm font-bold text-slate-300 mb-2">顯示名稱</label>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={localName}
-                onChange={(e) => setLocalName(e.target.value)}
-                onBlur={handleSaveName}
-                className="flex-1 px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
-                placeholder="在週報中顯示的稱呼"
-              />
-            </div>
-          </div>
+          <CardHeader title="告訴我們你是誰 👤" subtitle="這些資訊用於產生監測關鍵字，填得越完整越精準" />
 
           {/* Chinese Name */}
           <div className="mb-5">
-            <label className="block text-sm font-bold text-slate-300 mb-2">中文名</label>
+            <label className="block text-sm font-bold text-slate-300 mb-2">本名 / 藝名</label>
             <input
               type="text"
               value={localChineseName}
@@ -265,7 +217,7 @@ export default function SettingsPage() {
 
           {/* English Name */}
           <div className="mb-5">
-            <label className="block text-sm font-bold text-slate-300 mb-2">英文名</label>
+            <label className="block text-sm font-bold text-slate-300 mb-2">英文名 / 英文藝名</label>
             <input
               type="text"
               value={localEnglishName}
@@ -277,7 +229,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Brand Names */}
-          <div>
+          <div className="mb-5">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-bold text-slate-300">品牌名稱</label>
               <span className="text-xs text-slate-500">每個品牌 +NT${BRAND_PRICE}/月</span>
@@ -307,7 +259,7 @@ export default function SettingsPage() {
                 onChange={(e) => setNewBrand(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddBrand()}
                 className="flex-1 px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
-                placeholder="新增品牌或帳號名稱"
+                placeholder="例如：PAC Studio"
               />
               <Button variant="outline" onClick={handleAddBrand} className="rounded-2xl border-slate-600 hover:border-cyan-500 hover:text-cyan-400">
                 <Plus className="w-4 h-4" />
@@ -315,14 +267,73 @@ export default function SettingsPage() {
               </Button>
             </div>
           </div>
+
+          {/* Fan Pages */}
+          <div>
+            <label className="block text-sm font-bold text-slate-300 mb-2">粉專名稱與連結</label>
+            {(settings.fanPages || []).length > 0 && (
+              <div className="space-y-2 mb-3">
+                {(settings.fanPages || []).map((fp, i) => (
+                  <div key={i} className="flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-2xl border border-slate-600">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-medium truncate">{fp.name}</p>
+                      {fp.url && <p className="text-slate-400 text-xs truncate">{fp.url}</p>}
+                    </div>
+                    <button
+                      onClick={() => handleRemoveFanPage(i)}
+                      className="hover:text-rose-400 transition-colors flex-shrink-0 bg-white/10 rounded-full p-0.5 hover:bg-white/20"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={newFanPageName}
+                onChange={(e) => setNewFanPageName(e.target.value)}
+                className="w-full px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
+                placeholder="粉專名稱，例如：陳品安官方粉絲團"
+              />
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={newFanPageUrl}
+                  onChange={(e) => setNewFanPageUrl(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddFanPage()}
+                  className="flex-1 px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
+                  placeholder="粉專連結，例如：https://www.instagram.com/pinan"
+                />
+                <Button variant="outline" onClick={handleAddFanPage} className="rounded-2xl border-slate-600 hover:border-cyan-500 hover:text-cyan-400 flex-shrink-0">
+                  <Plus className="w-4 h-4" />
+                  新增
+                </Button>
+              </div>
+            </div>
+          </div>
         </Card>
 
         {/* Monitored Keywords */}
         <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
-          <CardHeader
-            title="監測關鍵字 🔍"
-            subtitle="我們會監測包含這些關鍵字的帳號"
-          />
+          <div className="flex items-start justify-between mb-1">
+            <CardHeader
+              title="監測關鍵字 🔍"
+              subtitle="我們會監測包含這些關鍵字的帳號"
+            />
+            <span className={cn(
+              'text-sm font-bold px-3 py-1 rounded-full border flex-shrink-0 mt-1',
+              keywordCount >= MAX_KEYWORDS
+                ? 'text-rose-300 bg-rose-500/10 border-rose-500/30'
+                : 'text-slate-400 bg-slate-800/60 border-slate-700'
+            )}>
+              {keywordCount} / {MAX_KEYWORDS}
+            </span>
+          </div>
+          {keywordCount >= MAX_KEYWORDS && (
+            <p className="text-rose-400 text-xs font-medium mb-3">已達上限，請先移除一個關鍵字再新增</p>
+          )}
           <div className="flex flex-wrap gap-2 mb-5">
             {settings.monitoredKeywords.map((keyword) => (
               <span
@@ -345,10 +356,19 @@ export default function SettingsPage() {
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddKeyword()}
-              className="flex-1 px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner"
-              placeholder="新增關鍵字（品牌名、人名等）"
+              disabled={keywordCount >= MAX_KEYWORDS}
+              className={cn(
+                'flex-1 px-4 py-3 border bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner',
+                keywordCount >= MAX_KEYWORDS ? 'border-slate-700/50 opacity-40 cursor-not-allowed' : 'border-slate-700'
+              )}
+              placeholder={keywordCount >= MAX_KEYWORDS ? '已達 3 個關鍵字上限' : '新增關鍵字（品牌名、人名等）'}
             />
-            <Button variant="outline" onClick={handleAddKeyword} className="rounded-2xl border-slate-600 hover:border-cyan-500 hover:text-cyan-400">
+            <Button
+              variant="outline"
+              onClick={handleAddKeyword}
+              disabled={keywordCount >= MAX_KEYWORDS}
+              className="rounded-2xl border-slate-600 hover:border-cyan-500 hover:text-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-600 disabled:hover:text-current"
+            >
               <Plus className="w-4 h-4" />
               新增
             </Button>
@@ -370,13 +390,14 @@ export default function SettingsPage() {
                 <p className="text-slate-400 text-xs mb-3">
                   根據你的中文名、英文名與品牌名稱，自動產生常見冒名變體，點擊即可加入監控
                 </p>
-                {generateSuggestions().length > 0 ? (
+                {suggestions.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {generateSuggestions().map((suggestion) => (
+                    {suggestions.map((suggestion) => (
                       <button
                         key={suggestion}
                         onClick={() => handleAddSuggestion(suggestion)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border border-amber-500/30 bg-amber-500/5 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400 transition-all hover:scale-105"
+                        disabled={keywordCount >= MAX_KEYWORDS}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border border-amber-500/30 bg-amber-500/5 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400 transition-all hover:scale-105 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-amber-500/5 disabled:hover:border-amber-500/30"
                       >
                         <Plus className="w-3 h-3" />
                         {suggestion}
@@ -459,138 +480,6 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
-        </Card>
-
-        {/* Delegation Preference */}
-        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
-          <CardHeader
-            title="代管偏好 🤝"
-            subtitle="遇到問題時，你希望我們如何協助"
-          />
-          <div className="space-y-3">
-            {delegationOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleDelegationChange(option.value)}
-                className={cn(
-                  'w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-300',
-                  settings.delegationPreference === option.value
-                    ? 'border-purple-500 bg-purple-950/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]'
-                    : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
-                )}
-              >
-                <div
-                  className={cn(
-                    'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
-                    settings.delegationPreference === option.value
-                      ? 'border-purple-500 bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.4)]'
-                      : 'border-slate-600 bg-slate-800'
-                  )}
-                >
-                  {settings.delegationPreference === option.value && (
-                    <Check className="w-3.5 h-3.5 text-white" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <p
-                      className={cn(
-                        'font-bold text-lg',
-                        settings.delegationPreference === option.value
-                          ? 'text-purple-300'
-                          : 'text-slate-200'
-                      )}
-                    >
-                      {option.label}
-                    </p>
-                    {option.priceNote && (
-                      <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
-                        {option.priceNote}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-slate-400 mt-1">{option.description}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </Card>
-
-        {/* Pricing Estimate */}
-        <Card className="mb-6 bg-gradient-to-br from-cyan-950/60 to-slate-900/60 backdrop-blur border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-          <CardHeader
-            title="方案估算 💰"
-            subtitle="根據你的監控設定，即時估算每月費用"
-          />
-
-          {/* Price Display */}
-          <div className="text-center mb-6">
-            <div className="flex items-baseline justify-center gap-1">
-              <span className="text-slate-400 text-lg">NT$</span>
-              <span className="text-5xl font-black text-white tracking-tight">{monthlyPrice.toLocaleString()}</span>
-              <span className="text-slate-400 text-lg">/月</span>
-            </div>
-            <p className="text-cyan-300/80 text-sm mt-2">
-              年繳 NT${yearlyPrice.toLocaleString()}/年（省 2 個月）
-            </p>
-          </div>
-
-          {/* Breakdown Toggle */}
-          <button
-            onClick={() => setShowPriceBreakdown(!showPriceBreakdown)}
-            className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-cyan-300 transition-colors mb-4"
-          >
-            查看費用明細
-            {showPriceBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-
-          {/* Breakdown Details */}
-          {showPriceBreakdown && (
-            <div className="bg-slate-800/60 rounded-2xl p-4 space-y-3 text-sm mb-4">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-300">基本月費</span>
-                <span className="text-white font-bold">NT$ {BASE_PRICE}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-300">
-                  關鍵字監控 × {keywordCount}
-                  <span className="text-slate-500 ml-1">（每組 NT${KEYWORD_PRICE}）</span>
-                </span>
-                <span className="text-white font-bold">NT$ {(keywordCount * KEYWORD_PRICE).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-300">
-                  平台監控 × {platformCount}
-                  <span className="text-slate-500 ml-1">（每個 NT${PLATFORM_PRICE}）</span>
-                </span>
-                <span className="text-white font-bold">NT$ {(platformCount * PLATFORM_PRICE).toLocaleString()}</span>
-              </div>
-              {brandCount > 0 && (
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-300">
-                    品牌監控 × {brandCount}
-                    <span className="text-slate-500 ml-1">（每個 NT${BRAND_PRICE}）</span>
-                  </span>
-                  <span className="text-white font-bold">NT$ {(brandCount * BRAND_PRICE).toLocaleString()}</span>
-                </div>
-              )}
-              {isDelegate && (
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-300">代管服務</span>
-                  <span className="text-purple-300 font-bold">NT$ {DELEGATION_PRICE}</span>
-                </div>
-              )}
-              <div className="border-t border-slate-700 pt-3 flex justify-between items-center">
-                <span className="text-white font-bold">合計 /月</span>
-                <span className="text-cyan-300 font-black text-lg">NT$ {monthlyPrice.toLocaleString()}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Hint */}
-          <p className="text-center text-slate-500 text-xs">
-            調整上方的關鍵字、平台或代管偏好，費用會即時更新
-          </p>
         </Card>
 
         {/* Reset */}

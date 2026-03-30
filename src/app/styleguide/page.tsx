@@ -8,9 +8,9 @@ import { CopyButton } from '@/components/ui/CopyButton';
 export default function StyleGuidePage() {
   const sampleTimeline = [
     { status: 'detected' as const, label: '偵測發現', timestamp: '2024-01-15T09:23:00+08:00', completed: true },
-    { status: 'evidence_prepared' as const, label: '證據整理完成', timestamp: '2024-01-15T09:45:00+08:00', completed: true },
-    { status: 'action_suggested' as const, label: '建議行動', timestamp: '2024-01-15T10:00:00+08:00', completed: true },
-    { status: 'handled' as const, label: '處理完成', timestamp: '', completed: false },
+    { status: 'scheduled' as const, label: '已排程', timestamp: '2024-01-15T09:45:00+08:00', completed: true },
+    { status: 'submitted' as const, label: '已送件', timestamp: '2024-01-15T10:00:00+08:00', completed: true },
+    { status: 'resolved' as const, label: '已解決', timestamp: '', completed: false },
   ];
 
   return (
@@ -226,9 +226,10 @@ export default function StyleGuidePage() {
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-3">Status</p>
                 <div className="flex flex-wrap gap-3">
-                  <StatusBadge status="active" />
-                  <StatusBadge status="pending" />
-                  <StatusBadge status="completed" />
+                  <StatusBadge status="detected" />
+                  <StatusBadge status="scheduled" />
+                  <StatusBadge status="submitted" />
+                  <StatusBadge status="resolved" />
                   <StatusBadge status="monitoring" />
                 </div>
               </div>

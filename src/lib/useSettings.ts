@@ -26,14 +26,16 @@ export function useSettings() {
 
   // Save settings to localStorage
   const saveSettings = useCallback((newSettings: Partial<UserProfile>) => {
-    const updated = { ...settings, ...newSettings };
-    setSettings(updated);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {
-      console.error('Failed to save settings:', e);
-    }
-  }, [settings]);
+    setSettings(prev => {
+      const updated = { ...prev, ...newSettings };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save settings:', e);
+      }
+      return updated;
+    });
+  }, []);
 
   // Update specific fields
   const updateDisplayName = useCallback((name: string) => {
@@ -64,6 +66,10 @@ export function useSettings() {
     saveSettings({ brandNames: brands });
   }, [saveSettings]);
 
+  const updateFanPages = useCallback((fanPages: { name: string; url: string }[]) => {
+    saveSettings({ fanPages });
+  }, [saveSettings]);
+
   const updateDelegationPreference = useCallback((preference: DelegationPreference) => {
     saveSettings({ delegationPreference: preference });
   }, [saveSettings]);
@@ -88,6 +94,7 @@ export function useSettings() {
     updateChineseName,
     updateEnglishName,
     updateBrandNames,
+    updateFanPages,
     updateDelegationPreference,
     resetSettings,
   };

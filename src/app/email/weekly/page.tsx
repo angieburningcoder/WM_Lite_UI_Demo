@@ -198,8 +198,11 @@ Watchmen Lite by Gogolook
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Email 週報預覽</h1>
-            <p className="text-gray-500 mt-1">查看寄給你的週報 Email</p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-3">
+              📧 以下為系統每週寄出的 Email 預覽
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">週報 Email 預覽</h1>
+            <p className="text-gray-500 mt-1">這封信是用戶每週收到的監控摘要</p>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import { RiskLevel } from '@/data/types';
+import { RiskLevel, CaseStatus } from '@/data/types';
 import { getRiskLevelInfo, cn } from '@/lib/utils';
 
 interface RiskBadgeProps {
@@ -38,15 +38,16 @@ export function RiskBadge({ level, showLabel = true, size = 'md' }: RiskBadgePro
 }
 
 interface StatusBadgeProps {
-  status: 'active' | 'pending' | 'completed' | 'monitoring';
+  status: CaseStatus;
   size?: 'sm' | 'md';
 }
 
 export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
-  const statusInfo = {
-    active: { label: '處理中', color: 'bg-blue-600 text-white border-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.4)]' },
-    pending: { label: '待處理', color: 'bg-slate-600 text-white border-slate-400' },
-    completed: { label: '已完成', color: 'bg-green-600 text-white border-green-400 shadow-[0_0_10px_rgba(22,163,74,0.4)]' },
+  const statusInfo: Record<CaseStatus, { label: string; color: string }> = {
+    detected: { label: '偵測中', color: 'bg-slate-600 text-white border-slate-400' },
+    scheduled: { label: '已排程', color: 'bg-rose-600 text-white border-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.4)]' },
+    submitted: { label: '已送件', color: 'bg-blue-600 text-white border-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.4)]' },
+    resolved: { label: '已下架成功', color: 'bg-green-600 text-white border-green-400 shadow-[0_0_10px_rgba(22,163,74,0.4)]' },
     monitoring: { label: '監控中', color: 'bg-purple-600 text-white border-purple-400 shadow-[0_0_10px_rgba(147,51,234,0.4)]' },
   };
 

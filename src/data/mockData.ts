@@ -1,4 +1,4 @@
-import { UserProfile, Case, Alert, WeeklyReport, EnvironmentSignal } from './types';
+import { UserProfile, Case, Alert, WeeklyReport, EnvironmentSignal, CaseStatus } from './types';
 
 // Default User Profile
 export const defaultUserProfile: UserProfile = {
@@ -6,11 +6,16 @@ export const defaultUserProfile: UserProfile = {
   chineseName: '陳品安',
   englishName: 'Pin-An Chen',
   brandNames: ['pinan_official'],
+  fanPages: [],
   monitoredKeywords: ['陳品安', 'Pin-An Chen', 'pinan_official'],
   platforms: ['Instagram', 'Facebook'],
   timezone: 'Asia/Taipei',
   notificationFrequency: 'daily',
   delegationPreference: 'delegate_when_needed',
+  hasCompletedOnboarding: false,
+  loaUploaded: false,
+  trademarkProvided: false,
+  privacyConsentAccepted: false,
 };
 
 // Environment Signals
@@ -53,6 +58,9 @@ export const cases: Case[] = [
     followers: 2847,
     discoveredAt: '2024-01-15T09:23:00+08:00',
     riskLevel: 'H',
+    currentStatus: 'scheduled',
+    currentStatusLabel: '已排程',
+    lastUpdatedAt: '2024-01-15T10:00:00+08:00',
     reasons: [
       '帳號名稱與您的官方帳號相似度達 94%（使用數字 0 替代字母 o）',
       '個人簡介複製您的官方介紹文字',
@@ -61,9 +69,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-15T09:23:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-15T09:45:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '2024-01-15T10:00:00+08:00', completed: true },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-15T09:45:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-15T10:00:00+08:00', completed: true },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -125,6 +133,9 @@ export const cases: Case[] = [
     followers: 1523,
     discoveredAt: '2024-01-14T14:30:00+08:00',
     riskLevel: 'H',
+    currentStatus: 'submitted',
+    currentStatusLabel: '已送件',
+    lastUpdatedAt: '2024-01-15T16:30:00+08:00',
     reasons: [
       '粉專名稱使用您的真名，並加上「工作室」誤導為官方',
       '發布內容聲稱代理您的商業合作',
@@ -133,9 +144,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-14T14:30:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-14T15:00:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '2024-01-14T15:30:00+08:00', completed: true },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-14T15:00:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-14T15:30:00+08:00', completed: true },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -192,6 +203,9 @@ export const cases: Case[] = [
     followers: 856,
     discoveredAt: '2024-01-13T11:00:00+08:00',
     riskLevel: 'M',
+    currentStatus: 'scheduled',
+    currentStatusLabel: '已排程',
+    lastUpdatedAt: '2024-01-13T12:00:00+08:00',
     reasons: [
       '帳號名稱包含您的英文名「pinan」',
       '部分貼文轉載您的公開內容',
@@ -199,9 +213,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-13T11:00:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-13T11:30:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '2024-01-13T12:00:00+08:00', completed: false },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-13T11:30:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-13T12:00:00+08:00', completed: false },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -252,6 +266,9 @@ export const cases: Case[] = [
     followers: 423,
     discoveredAt: '2024-01-12T16:45:00+08:00',
     riskLevel: 'M',
+    currentStatus: 'scheduled',
+    currentStatusLabel: '已排程',
+    lastUpdatedAt: '2024-01-12T17:00:00+08:00',
     reasons: [
       '帳號名稱組合包含您的姓名拼音',
       '帳號內容主題與您無直接關聯',
@@ -259,9 +276,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-12T16:45:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-12T17:00:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '', completed: false },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-12T17:00:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '', completed: false },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -291,6 +308,9 @@ export const cases: Case[] = [
     followers: 2100,
     discoveredAt: '2024-01-11T09:15:00+08:00',
     riskLevel: 'M',
+    currentStatus: 'resolved',
+    currentStatusLabel: '已下架成功',
+    lastUpdatedAt: '2024-01-14T09:00:00+08:00',
     reasons: [
       '以「粉絲團」名義建立，但未標明非官方',
       '轉載您的公開內容並加上自己的評論',
@@ -298,9 +318,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-11T09:15:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-11T10:00:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '2024-01-11T10:30:00+08:00', completed: true },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-11T10:00:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-11T10:30:00+08:00', completed: true },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -352,6 +372,9 @@ export const cases: Case[] = [
     followers: 156,
     discoveredAt: '2024-01-10T20:30:00+08:00',
     riskLevel: 'H',
+    currentStatus: 'submitted',
+    currentStatusLabel: '已送件',
+    lastUpdatedAt: '2024-01-12T22:00:00+08:00',
     reasons: [
       '以「備用帳號」名義建立，暗示與您有關',
       '頭像使用您的照片',
@@ -360,9 +383,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-10T20:30:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-10T21:00:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '2024-01-10T21:30:00+08:00', completed: true },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-10T21:00:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-10T21:30:00+08:00', completed: true },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -408,6 +431,9 @@ export const cases: Case[] = [
     followers: 3200,
     discoveredAt: '2024-01-09T15:00:00+08:00',
     riskLevel: 'M',
+    currentStatus: 'scheduled',
+    currentStatusLabel: '已排程',
+    lastUpdatedAt: '2024-01-09T16:00:00+08:00',
     reasons: [
       '使用「official」官方字樣',
       '貼文內容轉載自您的其他平台',
@@ -415,9 +441,9 @@ export const cases: Case[] = [
     ],
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-09T15:00:00+08:00', completed: true },
-      { status: 'evidence_prepared', label: '證據整理完成', timestamp: '2024-01-09T16:00:00+08:00', completed: true },
-      { status: 'action_suggested', label: '建議行動', timestamp: '', completed: false },
-      { status: 'handled', label: '處理完成', timestamp: '', completed: false },
+      { status: 'scheduled', label: '已排程', timestamp: '2024-01-09T16:00:00+08:00', completed: true },
+      { status: 'submitted', label: '申請已提交', timestamp: '', completed: false },
+      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -447,6 +473,9 @@ export const cases: Case[] = [
     followers: 289,
     discoveredAt: '2024-01-08T10:20:00+08:00',
     riskLevel: 'L',
+    currentStatus: 'monitoring',
+    currentStatusLabel: '持續監控中',
+    lastUpdatedAt: '2024-01-08T10:30:00+08:00',
     reasons: [
       '帳號名稱包含「pinan」關鍵字',
       '內容與您無直接關聯',
@@ -481,6 +510,9 @@ export const cases: Case[] = [
     followers: 178,
     discoveredAt: '2024-01-07T18:45:00+08:00',
     riskLevel: 'L',
+    currentStatus: 'monitoring',
+    currentStatusLabel: '持續監控中',
+    lastUpdatedAt: '2024-01-07T19:00:00+08:00',
     reasons: [
       '使用「Real」字樣暗示真實性',
       '帳號建立時間較短',
@@ -514,6 +546,9 @@ export const cases: Case[] = [
     followers: 1205,
     discoveredAt: '2024-01-06T14:00:00+08:00',
     riskLevel: 'L',
+    currentStatus: 'monitoring',
+    currentStatusLabel: '持續監控中',
+    lastUpdatedAt: '2024-01-06T14:15:00+08:00',
     reasons: [
       '名稱包含 pinan 但加上不同主題',
       '經營美妝內容，與您的領域不同',
@@ -548,6 +583,9 @@ export const cases: Case[] = [
     followers: 542,
     discoveredAt: '2024-01-05T11:30:00+08:00',
     riskLevel: 'L',
+    currentStatus: 'monitoring',
+    currentStatusLabel: '持續監控中',
+    lastUpdatedAt: '2024-01-05T11:45:00+08:00',
     reasons: [
       '使用 pinan 加上地區標示',
       '帳號內容為一般推文',
@@ -581,6 +619,9 @@ export const cases: Case[] = [
     followers: 89,
     discoveredAt: '2024-01-04T09:00:00+08:00',
     riskLevel: 'L',
+    currentStatus: 'monitoring',
+    currentStatusLabel: '持續監控中',
+    lastUpdatedAt: '2024-01-04T09:15:00+08:00',
     reasons: [
       '使用您的姓名拼音',
       '藝術創作帳號',
@@ -699,6 +740,8 @@ export const weeklyReport: WeeklyReport = {
     high: 3,
     medium: 4,
     low: 5,
+    scheduled: 4,
+    resolved: 1,
   },
   trend: [
     { date: '01/08', count: 2 },
@@ -728,4 +771,21 @@ export function getAlertById(id: string): Alert | undefined {
 export function getCasesByRiskLevel(level: 'H' | 'M' | 'L' | 'all'): Case[] {
   if (level === 'all') return cases;
   return cases.filter(c => c.riskLevel === level);
+}
+
+// Helper: get highest priority case (H first, unresolved first, newest first)
+export function getHighestPriorityCase(casesArr: Case[]): Case | undefined {
+  const riskOrder: Record<string, number> = { H: 0, M: 1, L: 2 };
+  const resolvedStatuses: CaseStatus[] = ['resolved', 'monitoring'];
+  return [...casesArr].sort((a, b) => {
+    // Unresolved first
+    const aResolved = resolvedStatuses.includes(a.currentStatus) ? 1 : 0;
+    const bResolved = resolvedStatuses.includes(b.currentStatus) ? 1 : 0;
+    if (aResolved !== bResolved) return aResolved - bResolved;
+    // H > M > L
+    const riskDiff = (riskOrder[a.riskLevel] ?? 2) - (riskOrder[b.riskLevel] ?? 2);
+    if (riskDiff !== 0) return riskDiff;
+    // Newest first
+    return new Date(b.discoveredAt).getTime() - new Date(a.discoveredAt).getTime();
+  })[0];
 }

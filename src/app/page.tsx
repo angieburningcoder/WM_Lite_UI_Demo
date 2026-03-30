@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Shield, Eye, FileCheck, AlertTriangle, Users, ChevronRight, FileText, Bell } from 'lucide-react';
+import { Shield, Eye, FileCheck, AlertTriangle, Users, ChevronRight, LayoutDashboard, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { FeatureCard } from '@/components/ui/Card';
 import { StarField } from '@/components/ui/StarField';
@@ -78,17 +78,17 @@ export default function HomePage() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Link href="/report/weekly">
+              <Link href="/dashboard">
                 <Button size="lg" className="w-full sm:w-auto text-xl px-12 py-6 shadow-cyan-500/20 shadow-xl hover:-translate-y-2">
-                  <FileText className="w-7 h-7" />
-                  看本週監控週報
+                  <LayoutDashboard className="w-7 h-7" />
+                  進入監控系統
                   <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link href="/alerts">
+              <Link href="/onboarding">
                 <Button variant="secondary" size="lg" className="w-full sm:w-auto text-xl px-12 py-6 hover:-translate-y-2">
-                  <Bell className="w-7 h-7" />
-                  看即時通知
+                  <Shield className="w-7 h-7" />
+                  開始設定帳戶
                 </Button>
               </Link>
             </div>
@@ -182,14 +182,20 @@ export default function HomePage() {
               </p>
             </Link>
 
-            <div className="p-8 bg-slate-900/30 backdrop-blur-md rounded-[32px] border-2 border-dashed border-slate-700 flex flex-col justify-center items-center text-center group hover:border-slate-500 transition-colors">
-              <h3 className="text-xl font-bold text-slate-300 mb-2 group-hover:text-white">
-                更多功能
-              </h3>
-              <p className="text-slate-400 group-hover:text-slate-300">
-                Coming soon...
+            <Link
+              href="/cases"
+              className="group p-8 bg-slate-900/50 backdrop-blur-md rounded-[32px] border-2 border-slate-700 hover:border-blue-400/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all duration-300 hover:-translate-y-2"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <FolderOpen className="w-6 h-6 text-blue-400" />
+                <h3 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors">
+                  案件追蹤
+                </h3>
+              </div>
+              <p className="text-slate-200 text-lg group-hover:text-white transition-colors">
+                查看所有偵測到的疑似偽冒帳號
               </p>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

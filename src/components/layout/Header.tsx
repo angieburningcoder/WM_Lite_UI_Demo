@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Shield, Bell, FileText, Settings, Menu, X, Home } from 'lucide-react';
+import { Shield, Bell, FileText, Settings, Menu, X, Home, LayoutDashboard, FolderOpen } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/', label: '首頁', icon: Home },
+  { href: '/dashboard', label: '儀表板', icon: LayoutDashboard },
+  { href: '/cases', label: '案件', icon: FolderOpen },
   { href: '/report/weekly', label: '週報', icon: FileText },
   { href: '/alerts', label: '通知', icon: Bell },
   { href: '/settings', label: '設定', icon: Settings },

@@ -2,7 +2,7 @@
 
 export type RiskLevel = 'H' | 'M' | 'L';
 export type Platform = 'Instagram' | 'Facebook' | 'Threads';
-export type CaseStatus = 'detected' | 'evidence_prepared' | 'action_suggested' | 'handled' | 'monitoring';
+export type CaseStatus = 'detected' | 'scheduled' | 'submitted' | 'resolved' | 'monitoring';
 export type NotificationFrequency = 'immediate' | 'daily' | 'weekly';
 export type DelegationPreference = 'self_only' | 'delegate_when_needed';
 
@@ -11,11 +11,17 @@ export interface UserProfile {
   chineseName: string;
   englishName: string;
   brandNames: string[];
+  fanPages: { name: string; url: string }[];
   monitoredKeywords: string[];
   platforms: Platform[];
   timezone: string;
   notificationFrequency: NotificationFrequency;
   delegationPreference: DelegationPreference;
+  hasCompletedOnboarding: boolean;
+  onboardingCompletedAt?: string;
+  loaUploaded?: boolean;
+  trademarkProvided?: boolean;
+  privacyConsentAccepted?: boolean;
 }
 
 export interface StatusTimelineItem {
@@ -52,6 +58,9 @@ export interface Case {
   followers: number;
   discoveredAt: string;
   riskLevel: RiskLevel;
+  currentStatus: CaseStatus;
+  currentStatusLabel: string;
+  lastUpdatedAt: string;
   reasons: string[];
   statusTimeline: StatusTimelineItem[];
   recommendedActions: {
@@ -93,6 +102,8 @@ export interface WeeklyReport {
     high: number;
     medium: number;
     low: number;
+    scheduled: number;
+    resolved: number;
   };
   trend: {
     date: string;
