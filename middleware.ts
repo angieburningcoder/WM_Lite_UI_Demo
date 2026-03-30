@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const USER = process.env.BASIC_AUTH_USER;
-const PASS = process.env.BASIC_AUTH_PASS;
-
 export function middleware(req: NextRequest) {
+  const USER = process.env.BASIC_AUTH_USER;
+  const PASS = process.env.BASIC_AUTH_PASS;
+
   const authHeader = req.headers.get('authorization');
 
-  if (authHeader) {
+  if (authHeader && USER && PASS) {
     const base64 = authHeader.replace('Basic ', '');
-    const decoded = Buffer.from(base64, 'base64').toString('utf-8');
-    const [user, pass] = decoded.split(':');
-    if (USER && PASS && user === USER && pass === PASS) {
+    const decoded = atob(base64);
+    const colonIndex = decoded.indexOf(':');
+    const user = decoded.slice(0, colonIndex);
+    const pass = decoded.slice(colonIndex + 1);
+    if (user === USER && pass === PASS) {
       return NextResponse.next();
     }
   }
