@@ -5,6 +5,7 @@ export const defaultUserProfile: UserProfile = {
   displayName: '陳品安',
   chineseName: '陳品安',
   englishName: 'Pin-An Chen',
+  email: '',
   brandNames: ['pinan_official'],
   fanPages: [],
   monitoredKeywords: ['陳品安', 'Pin-An Chen', 'pinan_official'],

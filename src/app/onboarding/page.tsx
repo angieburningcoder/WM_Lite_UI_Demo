@@ -29,6 +29,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [chineseName, setChineseName] = useState(settings.chineseName || '');
   const [englishName, setEnglishName] = useState(settings.englishName || '');
+  const [email, setEmail] = useState(settings.email || '');
   const [displayName, setDisplayName] = useState(settings.displayName || '');
   const [platforms, setPlatforms] = useState<Platform[]>(settings.platforms);
   const [brandNames, setBrandNames] = useState<string[]>(settings.brandNames);
@@ -81,7 +82,7 @@ export default function OnboardingPage() {
   };
 
   const canProceed = () => {
-    if (step === 1) return chineseName.trim().length > 0;
+    if (step === 1) return chineseName.trim().length > 0 && email.trim().length > 0;
     if (step === 2) return keywords.length > 0;
     if (step === 4) return privacyConsent;
     return true;
@@ -95,6 +96,7 @@ export default function OnboardingPage() {
     saveSettings({
       chineseName,
       englishName,
+      email,
       displayName: displayName || chineseName,
       brandNames,
       fanPages,
@@ -178,6 +180,20 @@ export default function OnboardingPage() {
                   onChange={e => setEnglishName(e.target.value)}
                   className="w-full px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
                   placeholder="例如：Pin-An Chen"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-2">
+                  Email <span className="text-rose-400">*</span>
+                  <span className="ml-2 text-xs font-normal text-slate-500">用於接收 Watchmen 週報</span>
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-700 bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                  placeholder="例如：pinan@example.com"
                 />
               </div>
 

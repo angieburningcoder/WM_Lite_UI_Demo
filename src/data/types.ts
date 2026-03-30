@@ -10,6 +10,7 @@ export interface UserProfile {
   displayName: string;
   chineseName: string;
   englishName: string;
+  email: string;
   brandNames: string[];
   fanPages: { name: string; url: string }[];
   monitoredKeywords: string[];
