@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Plus, X, ChevronRight, ChevronLeft, Shield, Upload, FileText, Key, Sparkles } from 'lucide-react';
+import { Check, Plus, X, ChevronRight, ChevronLeft, Shield, Upload, FileText, Sparkles, Download, AlertCircle, Camera, Loader2, XCircle } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
@@ -40,6 +40,9 @@ export default function OnboardingPage() {
   const [keywords, setKeywords] = useState<string[]>(settings.monitoredKeywords);
   const [newKeyword, setNewKeyword] = useState('');
   const [loaUploaded, setLoaUploaded] = useState(false);
+  const [loaDownloaded, setLoaDownloaded] = useState(false);
+  const [loaFileName, setLoaFileName] = useState('');
+  const [loaComplianceStatus, setLoaComplianceStatus] = useState<'idle' | 'checking' | 'passed' | 'failed'>('idle');
   const [trademarkProvided, setTrademarkProvided] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
 
@@ -400,49 +403,203 @@ export default function OnboardingPage() {
 
           {/* Step 3: 文件上傳 */}
           {step === 3 && (
-            <div className="space-y-5">
-              <CardHeader title="身份文件 📄" subtitle="幫助我們在代理時代表你的身份（Demo 模式，非實際上傳）" />
-              <div
-                onClick={() => setLoaUploaded(!loaUploaded)}
-                className={cn(
-                  'flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all',
-                  loaUploaded
-                    ? 'border-emerald-500 bg-emerald-950/30'
-                    : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
-                )}
-              >
-                <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', loaUploaded ? 'bg-emerald-500/20' : 'bg-slate-700/50')}>
-                  <Upload className={cn('w-5 h-5', loaUploaded ? 'text-emerald-400' : 'text-slate-500')} />
+            <div className="space-y-6">
+              <CardHeader title="身份文件 📄" subtitle="請下載 LOA 授權書、簽署後回傳，我們將代理你提交申訴" />
+
+              {/* ── 1. 下載表單 ── */}
+              <div className="space-y-2">
+                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">第一步・下載表單</p>
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-blue-950/30 border border-blue-500/30">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-white text-sm">LOA_Watchmen_Authorization.pdf</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Letter of Authorization・1 頁・繁體中文</p>
+                  </div>
+                  <button
+                    onClick={() => setLoaDownloaded(true)}
+                    className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold flex-shrink-0 transition-all',
+                      loaDownloaded
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/20'
+                    )}
+                  >
+                    {loaDownloaded ? (
+                      <><Check className="w-3.5 h-3.5" /> 已下載</>
+                    ) : (
+                      <><Download className="w-3.5 h-3.5" /> 下載範本</>
+                    )}
+                  </button>
                 </div>
-                <div className="flex-1">
-                  <p className="font-bold text-white">LOA 授權書</p>
-                  <p className="text-sm text-slate-400">Letter of Authorization，代理提交時使用</p>
-                </div>
-                {loaUploaded && <Check className="w-5 h-5 text-emerald-400" />}
               </div>
 
-              <div
-                onClick={() => setTrademarkProvided(!trademarkProvided)}
-                className={cn(
-                  'flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all',
-                  trademarkProvided
-                    ? 'border-emerald-500 bg-emerald-950/30'
-                    : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
-                )}
-              >
-                <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', trademarkProvided ? 'bg-emerald-500/20' : 'bg-slate-700/50')}>
-                  <FileText className={cn('w-5 h-5', trademarkProvided ? 'text-emerald-400' : 'text-slate-500')} />
+              {/* ── 2. 簽署說明 ── */}
+              <div className="space-y-2">
+                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">第二步・簽署方式</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
+                    <p className="text-sm font-bold text-white mb-1">✍️ 電子簽名</p>
+                    <p className="text-xs text-slate-400 leading-relaxed">使用 Adobe Sign、DocuSign 等工具完成簽名後，匯出 PDF 上傳</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
+                    <p className="text-sm font-bold text-white mb-1">🖊️ 紙本簽名</p>
+                    <p className="text-xs text-slate-400 leading-relaxed">列印後親筆簽名，拍照或掃描成 PDF / JPG 後上傳</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="font-bold text-white">商標或版權資料（選填）</p>
-                  <p className="text-sm text-slate-400">有助於強化申訴效力</p>
+
+                {/* Photo hints */}
+                <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-2">
+                  <p className="text-xs font-black text-amber-300 flex items-center gap-1.5">
+                    <Camera className="w-3.5 h-3.5" /> 拍攝 / 掃描注意事項
+                  </p>
+                  <ul className="space-y-1.5 text-xs text-slate-300">
+                    <li className="flex items-start gap-2"><span className="text-amber-400 mt-0.5 flex-shrink-0">•</span>四個角落需完整入鏡，不可裁切</li>
+                    <li className="flex items-start gap-2"><span className="text-amber-400 mt-0.5 flex-shrink-0">•</span>光線充足，避免反光、陰影或過曝</li>
+                    <li className="flex items-start gap-2"><span className="text-amber-400 mt-0.5 flex-shrink-0">•</span>字跡與簽名清晰可辨，禁止模糊</li>
+                    <li className="flex items-start gap-2"><span className="text-amber-400 mt-0.5 flex-shrink-0">•</span>格式：PDF、JPG、PNG・檔案大小 10MB 以內</li>
+                  </ul>
                 </div>
-                {trademarkProvided && <Check className="w-5 h-5 text-emerald-400" />}
               </div>
 
-              <p className="text-xs text-slate-500 bg-slate-800/30 rounded-xl p-3">
-                💡 Demo 模式下勾選即代表「已上傳」，不會儲存任何實際檔案。
-              </p>
+              {/* ── 3. 上傳 & 合規驗證 ── */}
+              <div className="space-y-2">
+                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">第三步・上傳簽署文件</p>
+
+                {loaComplianceStatus === 'passed' ? (
+                  /* Passed */
+                  <div className="p-5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-emerald-300">文件驗證通過</p>
+                        <p className="text-xs text-slate-400 truncate max-w-[220px]">{loaFileName}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5 pt-1 border-t border-emerald-500/20">
+                      {['簽名欄位已偵測', '文件內容完整', '影像品質符合標準', '檔案格式合規'].map(item => (
+                        <div key={item} className="flex items-center gap-2 text-xs text-emerald-200">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => { setLoaFileName(''); setLoaComplianceStatus('idle'); setLoaUploaded(false); }}
+                      className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+                      重新上傳
+                    </button>
+                  </div>
+                ) : loaComplianceStatus === 'checking' ? (
+                  /* Checking */
+                  <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 flex flex-col items-center gap-3 text-center">
+                    <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+                    <div>
+                      <p className="font-bold text-white text-sm">驗證中...</p>
+                      <p className="text-xs text-slate-400 mt-1">系統正在檢查文件合規性，請稍候</p>
+                    </div>
+                  </div>
+                ) : loaComplianceStatus === 'failed' ? (
+                  /* Failed */
+                  <div className="p-5 rounded-2xl bg-rose-950/30 border border-rose-500/40 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0">
+                        <XCircle className="w-5 h-5 text-rose-400" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-rose-300">驗證未通過</p>
+                        <p className="text-xs text-slate-400">請修正以下問題後重新上傳</p>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5 pt-1 border-t border-rose-500/20">
+                      {['影像模糊，請重新拍攝', '簽名欄位未偵測到'].map(item => (
+                        <div key={item} className="flex items-center gap-2 text-xs text-rose-300">
+                          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => { setLoaFileName(''); setLoaComplianceStatus('idle'); }}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-rose-500/20 hover:bg-rose-500/30 px-3 py-2 rounded-xl transition-all border border-rose-500/30"
+                    >
+                      <Upload className="w-3.5 h-3.5" /> 重新上傳
+                    </button>
+                  </div>
+                ) : loaFileName ? (
+                  /* File selected, ready to verify */
+                  <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-600/60 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                      <p className="text-sm text-white truncate flex-1">{loaFileName}</p>
+                      <button onClick={() => setLoaFileName('')} className="text-slate-500 hover:text-rose-400 transition-colors flex-shrink-0">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setLoaComplianceStatus('checking');
+                        setTimeout(() => { setLoaComplianceStatus('passed'); setLoaUploaded(true); }, 2000);
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-sm font-bold transition-all shadow-lg shadow-blue-500/20"
+                    >
+                      開始驗證合規性
+                    </button>
+                  </div>
+                ) : (
+                  /* Upload idle */
+                  <label className="block cursor-pointer">
+                    <div className="p-8 rounded-2xl border-2 border-dashed border-slate-600/60 hover:border-slate-500 bg-slate-800/20 hover:bg-slate-800/40 transition-all flex flex-col items-center gap-3 text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-700/50 flex items-center justify-center">
+                        <Upload className="w-6 h-6 text-slate-400" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-white text-sm">點擊上傳或拖曳檔案至此</p>
+                        <p className="text-xs text-slate-500 mt-1">PDF、JPG、PNG・最大 10MB</p>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={e => {
+                        const f = e.target.files?.[0];
+                        if (f) setLoaFileName(f.name);
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+
+              {/* ── Trademark (optional) ── */}
+              <div className="space-y-2">
+                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">商標 / 版權資料（選填）</p>
+                <div
+                  onClick={() => setTrademarkProvided(!trademarkProvided)}
+                  className={cn(
+                    'flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all',
+                    trademarkProvided
+                      ? 'border-emerald-500 bg-emerald-950/30'
+                      : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
+                  )}
+                >
+                  <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0', trademarkProvided ? 'bg-emerald-500/20' : 'bg-slate-700/50')}>
+                    <FileText className={cn('w-5 h-5', trademarkProvided ? 'text-emerald-400' : 'text-slate-500')} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-white text-sm">商標或版權文件</p>
+                    <p className="text-xs text-slate-400 mt-0.5">有助於強化申訴效力（非必填）</p>
+                  </div>
+                  {trademarkProvided ? <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" /> : <Plus className="w-4 h-4 text-slate-500 flex-shrink-0" />}
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-600 text-center">Demo 模式・檔案不會實際上傳至伺服器</p>
             </div>
           )}
 
