@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Activity, Calendar, CheckCircle, ChevronRight, FileText, Hash } from 'lucide-react';
+import { ArrowLeft, Activity, Calendar, CheckCircle, ChevronRight, FileText, Hash, BarChart2 } from 'lucide-react';
 import { TrendChart } from '@/components/charts/TrendChart';
 import { RiskBadge, PlatformBadge } from '@/components/ui/Badge';
 import { PageSkeleton } from '@/components/ui/Skeleton';
@@ -148,10 +148,13 @@ export default function ReportsCenterPage() {
         </Link>
 
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-black text-white tracking-tight mb-1">Reports Center</h1>
-          <p className="text-slate-400 text-base">{settings.displayName || settings.chineseName || '使用者'}</p>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+            <BarChart2 className="w-5 h-5 text-purple-400" />
+          </div>
+          <h1 className="text-3xl font-black text-white tracking-tight">Reports Center</h1>
         </div>
+        <p className="text-slate-400 text-base mb-8">偵測數據 · 趨勢分析 · 排程案件總覽</p>
 
         {/* Time Range Selector */}
         <div className="mb-8 p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
