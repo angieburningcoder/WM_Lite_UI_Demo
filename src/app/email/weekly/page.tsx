@@ -10,6 +10,26 @@ import { weeklyReport, cases } from '@/data/mockData';
 import { getWeekRangeString, copyToClipboard } from '@/lib/utils';
 import { useSettings } from '@/lib/useSettings';
 
+function buildWordSummary(
+  displayName: string,
+  total: number,
+  scheduled: number,
+  resolved: number
+): { headline: string; body: string; isAlert: boolean } {
+  if (scheduled > 0) {
+    return {
+      headline: `${displayName}，本週有 ${scheduled} 件案件已自動排程送件`,
+      body: `系統本週共偵測到 ${total} 個疑似冒名帳號，其中 ${scheduled} 件符合送件標準，已自動建立案件並排程處理。${resolved > 0 ? `另有 ${resolved} 件已成功下架。` : ''}請前往案件清單確認進度。`,
+      isAlert: true,
+    };
+  }
+  return {
+    headline: `${displayName}，你的帳號本週安全無虞`,
+    body: `系統本週共偵測到 ${total} 個疑似帳號，經評估均不符合送件標準，目前列入持續監控。${resolved > 0 ? `累計已有 ${resolved} 件成功下架。` : ''}你不用擔心，我們會持續守護你。`,
+    isAlert: false,
+  };
+}
+
 export default function EmailWeeklyPage() {
   const { settings, isLoaded } = useSettings();
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
@@ -17,6 +37,8 @@ export default function EmailWeeklyPage() {
   const weekRange = getWeekRangeString(weeklyReport.weekRange.start, weeklyReport.weekRange.end);
   const topCases = weeklyReport.topCases.map((id) => cases.find((c) => c.id === id)).filter(Boolean);
   const displayName = isLoaded ? settings.displayName : '使用者';
+  const { total, scheduled, resolved } = weeklyReport.totals;
+  const summary = buildWordSummary(displayName || '使用者', total, scheduled, resolved);
 
   const handleCopy = async (text: string, item: string) => {
     const success = await copyToClipboard(text);
@@ -32,9 +54,9 @@ export default function EmailWeeklyPage() {
 Watchmen Lite 週報
 ${weekRange}
 
-${displayName}，你好！
+${summary.headline}
 
-本週我們替你盯守，讓你不用一個人面對。
+${summary.body}
 
 📊 本週摘要
 - 偵測帳號數：${weeklyReport.totals.total}
@@ -82,8 +104,8 @@ Watchmen Lite by Gogolook
           <tr>
             <td style="padding:32px 32px 16px;">
               <p style="margin:0;color:#374151;font-size:16px;line-height:1.6;">
-                ${displayName}，你好！<br><br>
-                <strong style="color:#1F2937;">本週我們替你盯守，讓你不用一個人面對。</strong>
+                <strong style="color:#1F2937;">${summary.headline}</strong><br><br>
+                ${summary.body}
               </p>
             </td>
           </tr>
