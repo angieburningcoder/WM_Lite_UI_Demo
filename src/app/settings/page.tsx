@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, X, Check, RotateCcw, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Plus, X, Check, RotateCcw } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
@@ -27,7 +27,6 @@ export default function SettingsPage() {
     updateEnglishName,
     updateBrandNames,
     updateFanPages,
-    updateKeywords,
     updatePlatforms,
     updateNotificationFrequency,
     resetSettings,
@@ -38,11 +37,7 @@ export default function SettingsPage() {
   const [newFanPageName, setNewFanPageName] = useState('');
   const [newFanPageUrl, setNewFanPageUrl] = useState('');
   const [newBrand, setNewBrand] = useState('');
-  const [newKeyword, setNewKeyword] = useState('');
   const [saved, setSaved] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-
-  const keywordCount = settings.monitoredKeywords.length;
 
   useEffect(() => {
     if (isLoaded) {
@@ -87,22 +82,6 @@ export default function SettingsPage() {
     showSaved();
   };
 
-  const MAX_KEYWORDS = 3;
-
-  const handleAddKeyword = () => {
-    if (settings.monitoredKeywords.length >= MAX_KEYWORDS) return;
-    if (newKeyword.trim() && !settings.monitoredKeywords.includes(newKeyword.trim())) {
-      updateKeywords([...settings.monitoredKeywords, newKeyword.trim()]);
-      setNewKeyword('');
-      showSaved();
-    }
-  };
-
-  const handleRemoveKeyword = (keyword: string) => {
-    updateKeywords(settings.monitoredKeywords.filter((k) => k !== keyword));
-    showSaved();
-  };
-
   const handleTogglePlatform = (platform: Platform) => {
     if (settings.platforms.includes(platform)) {
       updatePlatforms(settings.platforms.filter((p) => p !== platform));
@@ -129,7 +108,11 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  // Memoized keyword suggestions based on Chinese name, English name, brand names, and fan pages
+  // 關鍵字自動推薦邏輯（keyword suggestion engine）：
+  // 根據使用者填入的中文名、英文名、品牌名、粉專名，自動產生常見冒名變體關鍵字，
+  // 例如：「陳品安」→「陳品安官方」、「陳品安客服」；「PinAn」→「pinan_official」、「real_pinan」。
+  // updateKeywords() 會將選中的關鍵字存入 useSettings（localStorage），並傳給後端監控引擎。
+  // 如需重新啟用關鍵字設定 UI，恢復此 useMemo 與對應的 Card 即可。
   const suggestions = useMemo(() => {
     const result: string[] = [];
     const chName = settings.chineseName;
@@ -149,12 +132,7 @@ export default function SettingsPage() {
     });
     return [...new Set(result)].filter(s => !settings.monitoredKeywords.includes(s));
   }, [settings.chineseName, settings.englishName, settings.fanPages, settings.brandNames, settings.monitoredKeywords]);
-
-  const handleAddSuggestion = (keyword: string) => {
-    if (settings.monitoredKeywords.length >= MAX_KEYWORDS) return;
-    updateKeywords([...settings.monitoredKeywords, keyword]);
-    showSaved();
-  };
+  void suggestions; // 保留供工程師參考，UI 暫不開放使用者編輯關鍵字
 
   if (!isLoaded) {
     return (
@@ -312,103 +290,6 @@ export default function SettingsPage() {
                 </Button>
               </div>
             </div>
-          </div>
-        </Card>
-
-        {/* Monitored Keywords */}
-        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
-          <div className="flex items-start justify-between mb-1">
-            <CardHeader
-              title="監測關鍵字 🔍"
-              subtitle="我們會監測包含這些關鍵字的帳號"
-            />
-            <span className={cn(
-              'text-sm font-bold px-3 py-1 rounded-full border flex-shrink-0 mt-1',
-              keywordCount >= MAX_KEYWORDS
-                ? 'text-rose-300 bg-rose-500/10 border-rose-500/30'
-                : 'text-slate-400 bg-slate-800/60 border-slate-700'
-            )}>
-              {keywordCount} / {MAX_KEYWORDS}
-            </span>
-          </div>
-          {keywordCount >= MAX_KEYWORDS && (
-            <p className="text-rose-400 text-xs font-medium mb-3">已達上限，請先移除一個關鍵字再新增</p>
-          )}
-          <div className="flex flex-wrap gap-2 mb-5">
-            {settings.monitoredKeywords.map((keyword) => (
-              <span
-                key={keyword}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-full text-sm border border-slate-600 shadow-lg shadow-black/20 hover:scale-105 transition-transform"
-              >
-                {keyword}
-                <button
-                  onClick={() => handleRemoveKeyword(keyword)}
-                  className="hover:text-rose-400 transition-colors bg-white/10 rounded-full p-0.5 hover:bg-white/20"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            ))}
-          </div>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={newKeyword}
-              onChange={(e) => setNewKeyword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddKeyword()}
-              disabled={keywordCount >= MAX_KEYWORDS}
-              className={cn(
-                'flex-1 px-4 py-3 border bg-slate-800/80 text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder-slate-500 transition-all shadow-inner',
-                keywordCount >= MAX_KEYWORDS ? 'border-slate-700/50 opacity-40 cursor-not-allowed' : 'border-slate-700'
-              )}
-              placeholder={keywordCount >= MAX_KEYWORDS ? '已達 3 個關鍵字上限' : '新增關鍵字（品牌名、人名等）'}
-            />
-            <Button
-              variant="outline"
-              onClick={handleAddKeyword}
-              disabled={keywordCount >= MAX_KEYWORDS}
-              className="rounded-2xl border-slate-600 hover:border-cyan-500 hover:text-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-600 disabled:hover:text-current"
-            >
-              <Plus className="w-4 h-4" />
-              新增
-            </Button>
-          </div>
-
-          {/* Auto Suggest */}
-          <div className="mt-4">
-            <button
-              onClick={() => setShowSuggestions(!showSuggestions)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all"
-            >
-              <Sparkles className="w-4 h-4" />
-              自動推薦關鍵字
-              {showSuggestions ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-
-            {showSuggestions && (
-              <div className="mt-3 bg-slate-800/60 rounded-2xl p-4">
-                <p className="text-slate-400 text-xs mb-3">
-                  根據你的中文名、英文名與品牌名稱，自動產生常見冒名變體，點擊即可加入監控
-                </p>
-                {suggestions.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {suggestions.map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        onClick={() => handleAddSuggestion(suggestion)}
-                        disabled={keywordCount >= MAX_KEYWORDS}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border border-amber-500/30 bg-amber-500/5 text-amber-200 hover:bg-amber-500/20 hover:border-amber-400 transition-all hover:scale-105 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-amber-500/5 disabled:hover:border-amber-500/30"
-                      >
-                        <Plus className="w-3 h-3" />
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-slate-500 text-sm">所有推薦關鍵字都已加入</p>
-                )}
-              </div>
-            )}
           </div>
         </Card>
 

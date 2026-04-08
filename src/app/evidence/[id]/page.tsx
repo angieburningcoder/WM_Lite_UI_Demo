@@ -10,7 +10,6 @@ import {
   FileText,
   CheckCircle,
   XCircle,
-  Copy,
   Download,
   Printer,
   Clock
@@ -18,7 +17,6 @@ import {
 import { Card, CardHeader } from '@/components/ui/Card';
 import { RiskBadge, PlatformBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { CopyButton } from '@/components/ui/CopyButton';
 import { getCaseById } from '@/data/mockData';
 import { formatDateTime } from '@/lib/utils';
 
@@ -229,25 +227,6 @@ export default function EvidencePage({ params }: PageProps) {
                 </div>
               </div>
             ))}
-          </div>
-        </Card>
-
-        {/* Report Text Block */}
-        <Card className="mb-6 print-avoid-break bg-slate-900/40 backdrop-blur border-slate-700/50">
-          <CardHeader
-            title="一鍵複製檢舉材料 📝"
-            subtitle="整合成可直接貼給平台的文字"
-            action={
-              <CopyButton
-                text={caseData.evidence.reportTextBlock}
-                label="複製檢舉文字"
-                variant="primary"
-                size="sm"
-              />
-            }
-          />
-          <div className="bg-slate-950/50 rounded-xl p-5 font-mono text-sm text-slate-300 whitespace-pre-wrap border border-slate-800 leading-relaxed">
-            {caseData.evidence.reportTextBlock}
           </div>
         </Card>
 
