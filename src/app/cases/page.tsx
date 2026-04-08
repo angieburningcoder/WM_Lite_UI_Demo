@@ -1,35 +1,36 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FolderOpen, ChevronRight, Clock } from 'lucide-react';
+import { ArrowLeft, FolderOpen, ChevronRight, Clock, ChevronLeft } from 'lucide-react';
 import { RiskBadge, PlatformBadge, StatusBadge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/Skeleton';
 import { cases } from '@/data/mockData';
 import { formatRelativeTime } from '@/lib/utils';
 import { Case } from '@/data/types';
+import { cn } from '@/lib/utils';
 
-const TRACKED_STATUSES = ['scheduled', 'submitted', 'accepted', 'success', 'failed', 'taken_down'] as const;
+const PAGE_SIZE = 5;
 
-const STAGES: { status: typeof TRACKED_STATUSES[number]; label: string; description: string }[] = [
-  { status: 'scheduled', label: '已排程', description: '系統自動建立，待送件' },
-  { status: 'submitted', label: '已送件', description: '平台審核中' },
-  { status: 'accepted', label: '已受理', description: '平台已確認受理，處理中' },
-  { status: 'success', label: '下架成功', description: '處理完成' },
-  { status: 'taken_down', label: '已確認下架', description: '非人工處理，來源不明' },
-  { status: 'failed', label: '申請失敗', description: '平台未通過申請' },
-];
+const TABS = [
+  { status: 'scheduled',  label: '已排程' },
+  { status: 'submitted',  label: '已送件' },
+  { status: 'accepted',   label: '已受理' },
+  { status: 'success',    label: '下架成功' },
+  { status: 'taken_down', label: '已確認下架' },
+  { status: 'failed',     label: '申請失敗' },
+] as const;
+
+type TabStatus = typeof TABS[number]['status'];
 
 function CaseRow({ c }: { c: Case }) {
   return (
     <Link href={`/cases/${c.id}`}>
       <div className="group flex items-center gap-4 p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/70 transition-all cursor-pointer">
-        {/* Badges */}
         <div className="flex flex-wrap items-center gap-1.5 flex-shrink-0">
           <RiskBadge level={c.riskLevel} size="sm" />
           <PlatformBadge platform={c.platform} size="sm" />
         </div>
-
-        {/* Account info */}
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white truncate">@{c.suspectedAccountName}</p>
           {c.failedReason ? (
@@ -38,13 +39,10 @@ function CaseRow({ c }: { c: Case }) {
             <p className="text-xs text-slate-500 truncate">{c.suspectedDisplayName}</p>
           )}
         </div>
-
-        {/* Last updated (ops sync indicator) */}
         <div className="flex-shrink-0 flex items-center gap-1.5 text-xs text-slate-500">
           <Clock className="w-3.5 h-3.5" />
           <span>{formatRelativeTime(c.lastUpdatedAt)}</span>
         </div>
-
         <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
       </div>
     </Link>
@@ -52,15 +50,24 @@ function CaseRow({ c }: { c: Case }) {
 }
 
 export default function CasesPage() {
-  const trackedCases = cases.filter(c => (TRACKED_STATUSES as readonly string[]).includes(c.currentStatus));
+  const [activeTab, setActiveTab] = useState<TabStatus>('scheduled');
+  const [page, setPage] = useState(1);
 
-  const stageCases = {
-    scheduled: trackedCases.filter(c => c.currentStatus === 'scheduled'),
-    submitted: trackedCases.filter(c => c.currentStatus === 'submitted'),
-    accepted: trackedCases.filter(c => c.currentStatus === 'accepted'),
-    success: trackedCases.filter(c => c.currentStatus === 'success'),
-    taken_down: trackedCases.filter(c => c.currentStatus === 'taken_down'),
-    failed: trackedCases.filter(c => c.currentStatus === 'failed'),
+  const allTracked = cases.filter(c =>
+    TABS.some(t => t.status === c.currentStatus)
+  );
+
+  const countByStatus = Object.fromEntries(
+    TABS.map(t => [t.status, allTracked.filter(c => c.currentStatus === t.status).length])
+  ) as Record<TabStatus, number>;
+
+  const activeList = allTracked.filter(c => c.currentStatus === activeTab);
+  const totalPages = Math.ceil(activeList.length / PAGE_SIZE);
+  const paginated = activeList.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleTabChange = (status: TabStatus) => {
+    setActiveTab(status);
+    setPage(1);
   };
 
   return (
@@ -81,48 +88,95 @@ export default function CasesPage() {
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">Case Tracker</h1>
         </div>
-        <p className="text-slate-400 text-base mb-8">追蹤排程 · 送件 · 下架進度</p>
+        <p className="text-slate-400 text-base mb-6">追蹤排程 · 送件 · 下架進度</p>
 
-        {/* Three Stages */}
-        {trackedCases.length === 0 ? (
+        {allTracked.length === 0 ? (
           <EmptyState
             title="目前沒有進行中的案件"
             description="系統尚未自動排程任何案件，我們持續監控中。"
             icon="shield"
           />
         ) : (
-          <div className="space-y-8">
-            {STAGES.map(stage => {
-              const list = stageCases[stage.status];
-              return (
-                <div key={stage.status}>
-                  {/* Stage Header */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <StatusBadge status={stage.status} size="md" />
-                    <p className="text-sm text-slate-500">{stage.description}</p>
-                    {list.length > 0 && (
-                      <span className="ml-auto text-xs font-bold text-slate-500">{list.length} 件</span>
+          <div className="bg-slate-900/40 border border-slate-700/50 rounded-2xl overflow-hidden">
+            {/* Tabs */}
+            <div className="flex overflow-x-auto border-b border-slate-700/50 scrollbar-none">
+              {TABS.map(tab => {
+                const count = countByStatus[tab.status];
+                const isActive = activeTab === tab.status;
+                return (
+                  <button
+                    key={tab.status}
+                    onClick={() => handleTabChange(tab.status)}
+                    className={cn(
+                      'flex items-center gap-2 px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all flex-shrink-0',
+                      isActive
+                        ? 'border-white text-white'
+                        : 'border-transparent text-slate-500 hover:text-slate-300 hover:border-slate-600'
                     )}
-                  </div>
+                  >
+                    {tab.label}
+                    {count > 0 && (
+                      <span className={cn(
+                        'text-xs px-1.5 py-0.5 rounded-full font-bold',
+                        isActive ? 'bg-white/15 text-white' : 'bg-slate-700/60 text-slate-400'
+                      )}>
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
 
-                  {/* Case Rows */}
-                  {list.length > 0 ? (
-                    <div className="space-y-2">
-                      {list.map(c => <CaseRow key={c.id} c={c} />)}
-                    </div>
-                  ) : (
-                    <div className="py-6 text-center rounded-xl border border-dashed border-slate-700/50">
-                      <p className="text-slate-600 text-sm">目前無案件</p>
-                    </div>
-                  )}
+            {/* Tab description */}
+            <div className="px-4 pt-3 pb-1">
+              <p className="text-xs text-slate-500">
+                <StatusBadge status={activeTab} size="sm" />
+                <span className="ml-2">
+                  {TABS.find(t => t.status === activeTab)?.label} · 共 {activeList.length} 件
+                </span>
+              </p>
+            </div>
+
+            {/* Case List */}
+            <div className="p-4 space-y-2 min-h-[200px]">
+              {paginated.length > 0 ? (
+                paginated.map(c => <CaseRow key={c.id} c={c} />)
+              ) : (
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-slate-600 text-sm">此狀態目前無案件</p>
                 </div>
-              );
-            })}
+              )}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-700/50">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  上一頁
+                </button>
+                <span className="text-xs text-slate-500">
+                  {page} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  下一頁
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Internal ops note */}
-        <p className="text-center text-slate-600 text-xs mt-10">
+        <p className="text-center text-slate-600 text-xs mt-8">
           案件狀態由 Watchmen 團隊人工更新 · 最後同步時間顯示於各案件右側
         </p>
       </div>
