@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, X, Check, RotateCcw } from 'lucide-react';
+import { Plus, X, Check, RotateCcw, ChevronDown } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
-import { Platform, NotificationFrequency } from '@/data/types';
+import { Platform, NotificationFrequency, TrademarkInfo } from '@/data/types';
 import { cn } from '@/lib/utils';
 import { BRAND_PRICE } from '@/lib/pricing';
 import { defaultUserProfile } from '@/data/mockData';
@@ -38,6 +38,13 @@ export default function SettingsPage() {
   const [newFanPageUrl, setNewFanPageUrl] = useState('');
   const [newBrand, setNewBrand] = useState('');
   const [saved, setSaved] = useState(false);
+  const [tmExpanded, setTmExpanded] = useState(false);
+  const [tmNameChinese, setTmNameChinese] = useState('');
+  const [tmNameEnglish, setTmNameEnglish] = useState('');
+  const [tmTerritory, setTmTerritory] = useState('');
+  const [tmNumber, setTmNumber] = useState('');
+  const [tmDatabaseUrl, setTmDatabaseUrl] = useState('');
+  const [tmStatus, setTmStatus] = useState<'registered' | 'pending'>('registered');
 
   useEffect(() => {
     if (isLoaded) {
@@ -100,6 +107,32 @@ export default function SettingsPage() {
     resetSettings();
     setLocalChineseName(defaultUserProfile.chineseName);
     setLocalEnglishName(defaultUserProfile.englishName);
+    showSaved();
+  };
+
+  const handleAddTrademark = () => {
+    if (!tmNameChinese.trim() && !tmNameEnglish.trim()) return;
+    const existing = settings.trademarks || [];
+    saveSettings({ trademarks: [...existing, {
+      nameChinese: tmNameChinese.trim(),
+      nameEnglish: tmNameEnglish.trim(),
+      registrationTerritory: tmTerritory.trim(),
+      registrationNumber: tmNumber.trim(),
+      databaseUrl: tmDatabaseUrl.trim(),
+      status: tmStatus,
+    }], trademarkProvided: true });
+    setTmNameChinese('');
+    setTmNameEnglish('');
+    setTmTerritory('');
+    setTmNumber('');
+    setTmDatabaseUrl('');
+    setTmStatus('registered');
+    showSaved();
+  };
+
+  const handleRemoveTrademark = (index: number) => {
+    const updated = (settings.trademarks || []).filter((_, i) => i !== index);
+    saveSettings({ trademarks: updated, trademarkProvided: updated.length > 0 });
     showSaved();
   };
 
@@ -291,6 +324,134 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+        </Card>
+
+        {/* Trademarks */}
+        <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
+          <CardHeader title="商標資料 ™️" subtitle="補充或追加商標資訊，有助於強化申訴效力" />
+
+          {/* Existing entries */}
+          {(settings.trademarks || []).length > 0 && (
+            <div className="space-y-2 mb-4">
+              {(settings.trademarks || []).map((tm: TrademarkInfo, i: number) => (
+                <div key={i} className="flex items-start gap-3 px-4 py-3 bg-slate-800 rounded-2xl border border-slate-600">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-bold">
+                      {tm.nameChinese || tm.nameEnglish}
+                      {tm.nameChinese && tm.nameEnglish && (
+                        <span className="text-slate-400 font-normal"> / {tm.nameEnglish}</span>
+                      )}
+                    </p>
+                    <p className="text-slate-400 text-xs mt-0.5">
+                      {[tm.registrationTerritory, tm.registrationNumber].filter(Boolean).join('・')}
+                      {tm.status === 'registered'
+                        ? <span className="ml-2 text-emerald-400">已註冊</span>
+                        : <span className="ml-2 text-amber-400">申請中</span>
+                      }
+                    </p>
+                    {tm.databaseUrl && (
+                      <p className="text-slate-500 text-xs truncate mt-0.5">{tm.databaseUrl}</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleRemoveTrademark(i)}
+                    className="hover:text-rose-400 transition-colors flex-shrink-0 text-slate-500 bg-white/10 rounded-full p-0.5 hover:bg-white/20 mt-0.5"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add form toggle */}
+          <button
+            onClick={() => setTmExpanded(!tmExpanded)}
+            className={cn(
+              'w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all text-left',
+              tmExpanded
+                ? 'border-cyan-500/50 bg-slate-800/50'
+                : 'border-dashed border-slate-700 hover:border-slate-500 bg-slate-800/20'
+            )}
+          >
+            <Plus className="w-4 h-4 text-slate-400 flex-shrink-0" />
+            <span className="text-sm text-slate-400 flex-1">新增商標</span>
+            <ChevronDown className={cn('w-4 h-4 text-slate-500 transition-transform', tmExpanded && 'rotate-180')} />
+          </button>
+
+          {/* Inline add form */}
+          {tmExpanded && (
+            <div className="mt-3 p-4 rounded-2xl bg-slate-800/40 border border-slate-700/60 space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={tmNameChinese}
+                  onChange={e => setTmNameChinese(e.target.value)}
+                  className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                  placeholder="商標名稱（中文）"
+                />
+                <input
+                  type="text"
+                  value={tmNameEnglish}
+                  onChange={e => setTmNameEnglish(e.target.value)}
+                  className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                  placeholder="商標名稱（英文）"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={tmTerritory}
+                  onChange={e => setTmTerritory(e.target.value)}
+                  className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                  placeholder="商標註冊地（例如：台灣）"
+                />
+                <input
+                  type="text"
+                  value={tmNumber}
+                  onChange={e => setTmNumber(e.target.value)}
+                  className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                  placeholder="商標註冊號碼"
+                />
+              </div>
+              <input
+                type="url"
+                value={tmDatabaseUrl}
+                onChange={e => setTmDatabaseUrl(e.target.value)}
+                className="w-full px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                placeholder="官方商標資料庫連結（例如 TIPO cloud）"
+              />
+              <div className="flex items-center gap-3">
+                <p className="text-sm text-slate-400 flex-shrink-0">商標狀態</p>
+                <div className="flex gap-2">
+                  {(['registered', 'pending'] as const).map(s => (
+                    <button
+                      key={s}
+                      onClick={() => setTmStatus(s)}
+                      className={cn(
+                        'px-3 py-1.5 rounded-xl text-xs font-bold border transition-all',
+                        tmStatus === s
+                          ? s === 'registered'
+                            ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300'
+                            : 'border-amber-500 bg-amber-950/40 text-amber-300'
+                          : 'border-slate-700 bg-slate-800/30 text-slate-400 hover:border-slate-500'
+                      )}
+                    >
+                      {s === 'registered' ? '已註冊' : '申請中'}
+                    </button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={handleAddTrademark}
+                  disabled={!tmNameChinese.trim() && !tmNameEnglish.trim()}
+                  className="ml-auto rounded-xl text-xs py-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Plus className="w-3.5 h-3.5" /> 新增
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
 
         {/* Platforms */}
