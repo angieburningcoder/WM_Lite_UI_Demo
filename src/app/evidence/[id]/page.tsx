@@ -230,25 +230,7 @@ export default function EvidencePage({ params }: PageProps) {
           </div>
         </Card>
 
-        {/* De-fear Footer */}
-        <Card className="bg-gradient-to-br from-blue-900/60 to-indigo-900/60 border-blue-500/30 no-print shadow-lg shadow-blue-500/10">
-          <div className="text-center py-4">
-            <p className="text-blue-200 font-bold text-lg mb-2">
-              證據已整理完成，你不用自己一個個截圖整理 😤
-            </p>
-            <p className="text-sm text-blue-300 mb-6">
-              如需我們協助提交檢舉，請前往案件詳情頁選擇「交給我們處理」。
-            </p>
-            <div className="flex justify-center gap-3">
-              <Link href={`/cases/${caseData.id}`}>
-                <Button size="sm" className="shadow-lg shadow-blue-500/20">返回案件詳情</Button>
-              </Link>
-              <Link href="/report/weekly">
-                <Button variant="outline" size="sm" className="border-slate-500 text-slate-300 hover:text-white hover:bg-slate-800">返回週報</Button>
-              </Link>
-            </div>
-          </div>
-        </Card>
+
       </div>
     </div>
   );

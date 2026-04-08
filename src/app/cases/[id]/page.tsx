@@ -8,7 +8,8 @@ import {
   ExternalLink,
   FileText,
   Shield,
-  AlertTriangle
+  AlertTriangle,
+  XCircle
 } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { RiskBadge, PlatformBadge } from '@/components/ui/Badge';
@@ -103,6 +104,21 @@ export default function CaseDetailPage({ params }: PageProps) {
               <CardHeader title="處理進度 ⏱️" />
               <Timeline items={caseData.statusTimeline} />
             </Card>
+
+            {/* Failed Reason */}
+            {caseData.currentStatus === 'failed' && caseData.failedReason && (
+              <Card className="bg-rose-950/30 border-rose-500/40">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center flex-shrink-0 border border-rose-500/30">
+                    <XCircle className="w-5 h-5 text-rose-400" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-rose-400 mb-1">申請失敗原因</p>
+                    <p className="text-rose-200/80 text-sm leading-relaxed">{caseData.failedReason}</p>
+                  </div>
+                </div>
+              </Card>
+            )}
 
             {/* Risk Analysis */}
             <Card className="bg-slate-900/40 backdrop-blur border-slate-700/50">
