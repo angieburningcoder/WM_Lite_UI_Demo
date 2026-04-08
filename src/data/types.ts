@@ -42,6 +42,15 @@ export interface StatusTimelineItem {
   completed: boolean;
 }
 
+export interface AdEvidence {
+  id: string;
+  platform: Platform;
+  adId: string;
+  adUrl?: string;
+  capturedAt: string;
+  description: string;
+}
+
 export interface Evidence {
   snapshots: {
     id: string;
@@ -57,11 +66,13 @@ export interface Evidence {
     detail: string;
   }[];
   reportTextBlock: string;
+  adEvidences: AdEvidence[];
 }
 
 export interface Case {
   id: string;
   platform: Platform;
+  suspectedAccountId: string;
   suspectedAccountName: string;
   suspectedDisplayName: string;
   suspectedUrl: string;

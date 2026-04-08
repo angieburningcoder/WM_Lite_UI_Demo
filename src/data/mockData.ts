@@ -52,6 +52,7 @@ export const cases: Case[] = [
   {
     id: 'case-001',
     platform: 'Instagram',
+    suspectedAccountId: '52847163920',
     suspectedAccountName: 'pinan_0fficial',
     suspectedDisplayName: '陳品安｜官方',
     suspectedUrl: 'https://instagram.com/pinan_0fficial',
@@ -122,11 +123,17 @@ export const cases: Case[] = [
 懇請平台儘速審核並移除該冒充帳號。
 
 附件：官方帳號證明、帳號比對截圖、相似度分析報告`,
+      adEvidences: [
+        { id: 'ad-001-1', platform: 'Instagram', adId: '23854916780010001', capturedAt: '2024-01-15T09:30:00+08:00', description: 'IG 動態廣告：以「陳品安官方帳號」名義宣傳代言合作，導向詐騙連結' },
+        { id: 'ad-001-2', platform: 'Facebook', adId: '23854916780010002', capturedAt: '2024-01-15T09:32:00+08:00', description: 'FB 版位廣告：相同詐騙文案，目標受眾為陳品安粉絲' },
+        { id: 'ad-001-3', platform: 'Instagram', adId: '23854916780010003', capturedAt: '2024-01-15T09:35:00+08:00', description: 'IG 限時動態廣告：假冒品牌合作限時優惠，包含個人資料蒐集表單' },
+      ],
     },
   },
   {
     id: 'case-002',
     platform: 'Facebook',
+    suspectedAccountId: '100067892345001',
     suspectedAccountName: '陳品安工作室',
     suspectedDisplayName: '陳品安工作室 - 官方粉專',
     suspectedUrl: 'https://facebook.com/pinan.studio.fake',
@@ -192,11 +199,18 @@ export const cases: Case[] = [
 
 本人從未授權成立任何「工作室」粉專，此為詐騙行為。
 請緊急處理以防止更多用戶受害。`,
+      adEvidences: [
+        { id: 'ad-002-1', platform: 'Facebook', adId: '23854916780020001', capturedAt: '2024-01-14T14:40:00+08:00', description: 'FB 動態廣告：宣傳「陳品安工作室」招募合作廠商，要求先行匯款' },
+        { id: 'ad-002-2', platform: 'Instagram', adId: '23854916780020002', capturedAt: '2024-01-14T14:42:00+08:00', description: 'IG 廣告：同一詐騙內容跨平台投放，附有假冒聯絡電話' },
+        { id: 'ad-002-3', platform: 'Facebook', adId: '23854916780020003', capturedAt: '2024-01-14T15:00:00+08:00', description: 'FB 再行銷廣告：針對曾看過前兩則廣告的用戶二次觸及，擴大詐騙範圍' },
+        { id: 'ad-002-4', platform: 'Instagram', adId: '23854916780020004', capturedAt: '2024-01-14T15:05:00+08:00', description: 'IG Reels 廣告：影片形式，偽造「陳品安」聲音宣傳代言費匯款詐騙' },
+      ],
     },
   },
   {
     id: 'case-003',
     platform: 'Instagram',
+    suspectedAccountId: '39182740056',
     suspectedAccountName: 'pinan.life',
     suspectedDisplayName: 'Pin-An 生活日記',
     suspectedUrl: 'https://instagram.com/pinan.life',
@@ -255,11 +269,16 @@ export const cases: Case[] = [
 - 有轉載公開內容的行為
 
 目前未達檢舉標準，建議持續監控。`,
+      adEvidences: [
+        { id: 'ad-003-1', platform: 'Instagram', adId: '23854916780030001', capturedAt: '2024-01-13T11:10:00+08:00', description: 'IG 廣告：轉載您的公開貼文並附上個人商品推廣連結' },
+        { id: 'ad-003-2', platform: 'Facebook', adId: '23854916780030002', capturedAt: '2024-01-13T11:15:00+08:00', description: 'FB 廣告：以「pinan 生活」名義促銷第三方商品，疑似借用您的名氣' },
+      ],
     },
   },
   {
     id: 'case-004',
     platform: 'Instagram',
+    suspectedAccountId: '74920183650',
     suspectedAccountName: 'chen.pinan.tw',
     suspectedDisplayName: '品安在台灣',
     suspectedUrl: 'https://instagram.com/chen.pinan.tw',
@@ -297,11 +316,13 @@ export const cases: Case[] = [
         { id: 'chk-14', item: '冒充行為', detected: false, detail: '未發現冒充跡象' },
       ],
       reportTextBlock: '此帳號目前判定為低風險，可能為同名者，持續觀察中。',
+      adEvidences: [],
     },
   },
   {
     id: 'case-005',
     platform: 'Facebook',
+    suspectedAccountId: '100084512378902',
     suspectedAccountName: 'pinan.fans',
     suspectedDisplayName: '陳品安粉絲團',
     suspectedUrl: 'https://facebook.com/pinan.fans.unofficial',
@@ -361,11 +382,16 @@ export const cases: Case[] = [
 如有任何問題，歡迎與本人官方帳號聯繫。
 
 謝謝您的配合。`,
+      adEvidences: [
+        { id: 'ad-005-1', platform: 'Facebook', adId: '23854916780050001', capturedAt: '2024-01-11T09:20:00+08:00', description: 'FB 廣告：「陳品安粉絲團」宣傳「粉絲限定」活動，蒐集個資' },
+        { id: 'ad-005-2', platform: 'Instagram', adId: '23854916780050002', capturedAt: '2024-01-11T09:25:00+08:00', description: 'IG 廣告：跨平台投放粉絲招募廣告，連結至可疑表單頁面' },
+      ],
     },
   },
   {
     id: 'case-006',
     platform: 'Instagram',
+    suspectedAccountId: '61839204751',
     suspectedAccountName: 'pinanchen_backup',
     suspectedDisplayName: '品安備用',
     suspectedUrl: 'https://instagram.com/pinanchen_backup',
@@ -421,11 +447,17 @@ export const cases: Case[] = [
 - 意圖明顯為冒充詐騙
 
 請緊急處理此冒充帳號。`,
+      adEvidences: [
+        { id: 'ad-006-1', platform: 'Instagram', adId: '23854916780060001', capturedAt: '2024-01-10T20:40:00+08:00', description: 'IG 廣告：「品安備用帳號」宣傳「粉絲私訊即可獲得代言資格」' },
+        { id: 'ad-006-2', platform: 'Facebook', adId: '23854916780060002', capturedAt: '2024-01-10T20:45:00+08:00', description: 'FB 廣告：跨平台投放，要求粉絲提供聯絡資訊以「加入私人群組」' },
+        { id: 'ad-006-3', platform: 'Instagram', adId: '23854916780060003', capturedAt: '2024-01-11T08:00:00+08:00', description: 'IG Story 廣告：假冒官方公告，引導用戶轉追蹤此「備用帳號」' },
+      ],
     },
   },
   {
     id: 'case-007',
     platform: 'Threads',
+    suspectedAccountId: 'threads_84729163050',
     suspectedAccountName: 'pinan_official_tw',
     suspectedDisplayName: '陳品安官方Threads',
     suspectedUrl: 'https://threads.net/@pinan_official_tw',
@@ -464,11 +496,16 @@ export const cases: Case[] = [
         { id: 'chk-22', item: '轉載內容', detected: true, detail: '影片轉載自其他平台' },
       ],
       reportTextBlock: '此帳號使用 official 字樣，建議確認您的 Threads 經營計畫後再決定處理方式。',
+      adEvidences: [
+        { id: 'ad-007-1', platform: 'Instagram', adId: '23854916780070001', capturedAt: '2024-01-09T15:10:00+08:00', description: 'IG 廣告：「陳品安官方 Threads」導流廣告，吸引用戶追蹤此帳號' },
+        { id: 'ad-007-2', platform: 'Facebook', adId: '23854916780070002', capturedAt: '2024-01-09T15:15:00+08:00', description: 'FB 廣告：跨平台宣傳同一 Threads 帳號，宣稱為官方新平台' },
+      ],
     },
   },
   {
     id: 'case-008',
     platform: 'Instagram',
+    suspectedAccountId: '29384756102',
     suspectedAccountName: 'pinan_daily',
     suspectedDisplayName: '品安日常',
     suspectedUrl: 'https://instagram.com/pinan_daily',
@@ -501,11 +538,13 @@ export const cases: Case[] = [
         { id: 'chk-24', item: '與您相關', detected: false, detail: '內容無關' },
       ],
       reportTextBlock: '低風險帳號，持續觀察中。',
+      adEvidences: [],
     },
   },
   {
     id: 'case-009',
     platform: 'Facebook',
+    suspectedAccountId: '100073841920671',
     suspectedAccountName: 'real.pinan',
     suspectedDisplayName: 'Real 品安',
     suspectedUrl: 'https://facebook.com/real.pinan',
@@ -537,11 +576,13 @@ export const cases: Case[] = [
         { id: 'chk-25', item: '使用 Real 字樣', detected: true, detail: '帳號名稱包含 Real' },
       ],
       reportTextBlock: '低風險，持續監控中。',
+      adEvidences: [],
     },
   },
   {
     id: 'case-010',
     platform: 'Instagram',
+    suspectedAccountId: '48291037465',
     suspectedAccountName: 'pinan.beauty',
     suspectedDisplayName: '品安美妝',
     suspectedUrl: 'https://instagram.com/pinan.beauty',
@@ -574,11 +615,13 @@ export const cases: Case[] = [
         { id: 'chk-27', item: '不同領域', detected: true, detail: '美妝領域' },
       ],
       reportTextBlock: '判定為非冒充帳號，但列入監控清單。',
+      adEvidences: [],
     },
   },
   {
     id: 'case-011',
     platform: 'Threads',
+    suspectedAccountId: 'threads_57162930481',
     suspectedAccountName: 'pinan_tw',
     suspectedDisplayName: 'PinAn Taiwan',
     suspectedUrl: 'https://threads.net/@pinan_tw',
@@ -610,11 +653,13 @@ export const cases: Case[] = [
         { id: 'chk-28', item: '名稱相似', detected: true, detail: '使用 pinan_tw' },
       ],
       reportTextBlock: '低風險帳號。',
+      adEvidences: [],
     },
   },
   {
     id: 'case-012',
     platform: 'Instagram',
+    suspectedAccountId: '83047291056',
     suspectedAccountName: 'chen_pinan_art',
     suspectedDisplayName: '陳品安藝術',
     suspectedUrl: 'https://instagram.com/chen_pinan_art',
@@ -647,11 +692,13 @@ export const cases: Case[] = [
         { id: 'chk-30', item: '不同領域', detected: true, detail: '藝術創作' },
       ],
       reportTextBlock: '可能為同名創作者，非冒充風險。',
+      adEvidences: [],
     },
   },
   {
     id: 'case-013',
     platform: 'Facebook',
+    suspectedAccountId: '100091234567890',
     suspectedAccountName: 'pinan.chen.official',
     suspectedDisplayName: '陳品安｜品安生活',
     suspectedUrl: 'https://facebook.com/pinan.chen.official',
@@ -681,11 +728,17 @@ export const cases: Case[] = [
         { id: 'chk-32', item: '使用 official 字樣', detected: true, detail: '個人介紹含「官方」' },
       ],
       reportTextBlock: '此帳號冒用您的完整姓名並標榜官方，建議立即申請下架。',
+      adEvidences: [
+        { id: 'ad-013-1', platform: 'Facebook', adId: '23854916780130001', capturedAt: '2024-01-16T08:15:00+08:00', description: 'FB 廣告：以「陳品安｜品安生活官方」宣傳最新代言合作' },
+        { id: 'ad-013-2', platform: 'Instagram', adId: '23854916780130002', capturedAt: '2024-01-16T08:20:00+08:00', description: 'IG 廣告：同帳號跨平台投放，宣傳假冒商品開箱' },
+        { id: 'ad-013-3', platform: 'Facebook', adId: '23854916780130003', capturedAt: '2024-01-16T08:30:00+08:00', description: 'FB 再行銷廣告：針對曾互動用戶二次追蹤，強化詐騙觸及' },
+      ],
     },
   },
   {
     id: 'case-014',
     platform: 'Instagram',
+    suspectedAccountId: '71038492650',
     suspectedAccountName: 'pinan_backup2024',
     suspectedDisplayName: 'Pin-An Backup',
     suspectedUrl: 'https://instagram.com/pinan_backup2024',
@@ -714,11 +767,16 @@ export const cases: Case[] = [
         { id: 'chk-34', item: '追蹤重疊', detected: true, detail: '高度重疊' },
       ],
       reportTextBlock: '此帳號使用 backup 字樣暗示為您的備用帳號，具有冒充意圖。',
+      adEvidences: [
+        { id: 'ad-014-1', platform: 'Instagram', adId: '23854916780140001', capturedAt: '2024-01-16T11:05:00+08:00', description: 'IG 廣告：「Pin-An Backup 帳號」宣傳「官方帳號被封，請追蹤備用帳號」' },
+        { id: 'ad-014-2', platform: 'Facebook', adId: '23854916780140002', capturedAt: '2024-01-16T11:10:00+08:00', description: 'FB 廣告：跨平台投放，引導粉絲轉移追蹤對象' },
+      ],
     },
   },
   {
     id: 'case-015',
     platform: 'Threads',
+    suspectedAccountId: 'threads_92847163050',
     suspectedAccountName: 'pinanchenreal',
     suspectedDisplayName: '真正的品安',
     suspectedUrl: 'https://threads.net/@pinanchenreal',
@@ -747,11 +805,17 @@ export const cases: Case[] = [
         { id: 'chk-36', item: '詐騙互動', detected: true, detail: '回覆代言合作詢問' },
       ],
       reportTextBlock: '此帳號主動聲稱為本人並與網友互動，具有高度詐騙風險。',
+      adEvidences: [
+        { id: 'ad-015-1', platform: 'Instagram', adId: '23854916780150001', capturedAt: '2024-01-17T09:05:00+08:00', description: 'IG 廣告：「真正的品安」廣告宣傳「官方認證代言合作限額」' },
+        { id: 'ad-015-2', platform: 'Facebook', adId: '23854916780150002', capturedAt: '2024-01-17T09:10:00+08:00', description: 'FB 廣告：同一帳號主控人跨平台投放，強調「限時」誘導匯款' },
+        { id: 'ad-015-3', platform: 'Instagram', adId: '23854916780150003', capturedAt: '2024-01-17T09:15:00+08:00', description: 'IG Reels 廣告：假冒直播宣傳剪輯片段，吸引受害者私訊' },
+      ],
     },
   },
   {
     id: 'case-016',
     platform: 'Instagram',
+    suspectedAccountId: '56392018374',
     suspectedAccountName: 'pinan_chen_studio',
     suspectedDisplayName: '品安工作室 Studio',
     suspectedUrl: 'https://instagram.com/pinan_chen_studio',
@@ -780,6 +844,10 @@ export const cases: Case[] = [
         { id: 'chk-38', item: 'Logo 變體', detected: true, detail: '使用品牌圖像' },
       ],
       reportTextBlock: '此帳號冒用工作室名義並使用品牌圖像，建議提交版權申訴。',
+      adEvidences: [
+        { id: 'ad-016-1', platform: 'Instagram', adId: '23854916780160001', capturedAt: '2024-01-17T14:35:00+08:00', description: 'IG 廣告：「品安工作室 Studio」宣傳版權授權合作，要求廠商付費' },
+        { id: 'ad-016-2', platform: 'Facebook', adId: '23854916780160002', capturedAt: '2024-01-17T14:40:00+08:00', description: 'FB 廣告：跨平台宣傳工作室「獨家代理合作方案」' },
+      ],
     },
   },
 ];

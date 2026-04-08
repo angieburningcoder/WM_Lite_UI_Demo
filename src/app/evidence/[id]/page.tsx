@@ -12,7 +12,11 @@ import {
   XCircle,
   Download,
   Printer,
-  Clock
+  Clock,
+  Megaphone,
+  ShieldCheck,
+  ShieldAlert,
+  User
 } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { RiskBadge, PlatformBadge } from '@/components/ui/Badge';
@@ -157,6 +161,94 @@ export default function EvidencePage({ params }: PageProps) {
             <span>發現時間：{formatDateTime(caseData.discoveredAt)}</span>
           </div>
         </Card>
+
+        {/* Filing Criteria Validation */}
+        {(() => {
+          const adCount = caseData.evidence.adEvidences.length;
+          const meetsFilingCriteria = adCount >= 2;
+          return (
+            <Card className={`mb-6 print-avoid-break ${meetsFilingCriteria ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-amber-950/20 border-amber-500/30'}`}>
+              <div className="flex items-center gap-3 mb-4">
+                {meetsFilingCriteria ? (
+                  <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                ) : (
+                  <ShieldAlert className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                )}
+                <h3 className={`font-bold text-base ${meetsFilingCriteria ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  立案條件驗證
+                </h3>
+                <span className={`ml-auto text-xs font-semibold px-2.5 py-1 rounded-full ${meetsFilingCriteria ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                  {meetsFilingCriteria ? '符合立案條件' : '尚未符合立案條件'}
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mb-4">立案定義：以一個假帳號（單一平台）對應複數個跨平台廣告投放證據</p>
+              <div className="space-y-3">
+                {/* Account */}
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-800/50 border border-slate-700/40">
+                  <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <User className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="text-xs font-semibold text-slate-300">假帳號（1 個，不跨平台）</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">{caseData.platform}</span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                      帳號名稱：<span className="font-mono text-slate-200">@{caseData.suspectedAccountName}</span>
+                      　帳號 ID：<span className="font-mono text-slate-200">{caseData.suspectedAccountId}</span>
+                    </p>
+                  </div>
+                </div>
+                {/* Ads */}
+                <div className={`flex items-start gap-3 p-3 rounded-xl border ${adCount >= 2 ? 'bg-slate-800/50 border-slate-700/40' : 'bg-amber-950/20 border-amber-500/20'}`}>
+                  {adCount >= 2 ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <XCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Megaphone className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="text-xs font-semibold text-slate-300">廣告投放證據（需 ≥ 2 則，可跨平台）</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${adCount >= 2 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                        已收集 {adCount} 則
+                      </span>
+                    </div>
+                    {adCount === 0 && (
+                      <p className="text-xs text-amber-400/80 mt-1">尚無廣告投放證據，持續監控中</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          );
+        })()}
+
+        {/* Ad Evidences */}
+        {caseData.evidence.adEvidences.length > 0 && (
+          <Card className="mb-6 print-avoid-break bg-slate-900/40 backdrop-blur border-slate-700/50">
+            <CardHeader
+              title="廣告投放證據 📢"
+              subtitle={`共 ${caseData.evidence.adEvidences.length} 則跨平台廣告`}
+            />
+            <div className="space-y-3">
+              {caseData.evidence.adEvidences.map((ad, index) => (
+                <div key={ad.id} className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:bg-slate-700/50 transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center flex-shrink-0 text-xs font-bold text-purple-300">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-medium">{ad.platform}</span>
+                      <span className="font-mono text-xs text-slate-400"># {ad.adId}</span>
+                    </div>
+                    <p className="text-sm text-slate-200 leading-relaxed">{ad.description}</p>
+                    <p className="text-xs text-slate-500 mt-1.5 font-mono">{formatDateTime(ad.capturedAt)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Evidence Items */}
         <Card className="mb-6 print-avoid-break bg-slate-900/40 backdrop-blur border-slate-700/50">

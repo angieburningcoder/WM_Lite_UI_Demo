@@ -149,9 +149,22 @@ export default function CaseDetailPage({ params }: PageProps) {
                   <dd className="text-3xl font-black text-white">{caseData.similarityScore}%</dd>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+                  <dt className="text-sm text-slate-400 mb-1">帳號 ID</dt>
+                  <dd className="text-xs font-mono text-slate-200 break-all">{caseData.suspectedAccountId}</dd>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
                   <dt className="text-sm text-slate-400 mb-1">追蹤者數量</dt>
                   <dd className="text-xl font-bold text-white">
                     {formatNumber(caseData.followers)}
+                  </dd>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+                  <dt className="text-sm text-slate-400 mb-1">廣告投放證據</dt>
+                  <dd className="flex items-center gap-2">
+                    <span className="text-xl font-bold text-white">{caseData.evidence.adEvidences.length}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${caseData.evidence.adEvidences.length >= 2 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-400'}`}>
+                      {caseData.evidence.adEvidences.length >= 2 ? '符合立案' : '不足'}
+                    </span>
                   </dd>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
