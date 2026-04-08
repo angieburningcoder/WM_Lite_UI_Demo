@@ -8,12 +8,15 @@ import { cases } from '@/data/mockData';
 import { formatRelativeTime } from '@/lib/utils';
 import { Case } from '@/data/types';
 
-const TRACKED_STATUSES = ['scheduled', 'submitted', 'resolved'] as const;
+const TRACKED_STATUSES = ['scheduled', 'submitted', 'accepted', 'success', 'failed', 'taken_down'] as const;
 
 const STAGES: { status: typeof TRACKED_STATUSES[number]; label: string; description: string }[] = [
   { status: 'scheduled', label: '已排程', description: '系統自動建立，待送件' },
   { status: 'submitted', label: '已送件', description: '平台審核中' },
-  { status: 'resolved', label: '已下架成功', description: '處理完成' },
+  { status: 'accepted', label: '已受理', description: '平台已確認受理，處理中' },
+  { status: 'success', label: '下架成功', description: '處理完成' },
+  { status: 'taken_down', label: '已確認下架', description: '非人工處理，來源不明' },
+  { status: 'failed', label: '申請失敗', description: '平台未通過申請' },
 ];
 
 function CaseRow({ c }: { c: Case }) {
@@ -29,7 +32,11 @@ function CaseRow({ c }: { c: Case }) {
         {/* Account info */}
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white truncate">@{c.suspectedAccountName}</p>
-          <p className="text-xs text-slate-500 truncate">{c.suspectedDisplayName}</p>
+          {c.failedReason ? (
+            <p className="text-xs text-rose-400 truncate">{c.failedReason}</p>
+          ) : (
+            <p className="text-xs text-slate-500 truncate">{c.suspectedDisplayName}</p>
+          )}
         </div>
 
         {/* Last updated (ops sync indicator) */}
@@ -47,11 +54,14 @@ function CaseRow({ c }: { c: Case }) {
 export default function CasesPage() {
   const trackedCases = cases.filter(c => (TRACKED_STATUSES as readonly string[]).includes(c.currentStatus));
 
-  const scheduledCases = trackedCases.filter(c => c.currentStatus === 'scheduled');
-  const submittedCases = trackedCases.filter(c => c.currentStatus === 'submitted');
-  const resolvedCases = trackedCases.filter(c => c.currentStatus === 'resolved');
-
-  const stageCases = { scheduled: scheduledCases, submitted: submittedCases, resolved: resolvedCases };
+  const stageCases = {
+    scheduled: trackedCases.filter(c => c.currentStatus === 'scheduled'),
+    submitted: trackedCases.filter(c => c.currentStatus === 'submitted'),
+    accepted: trackedCases.filter(c => c.currentStatus === 'accepted'),
+    success: trackedCases.filter(c => c.currentStatus === 'success'),
+    taken_down: trackedCases.filter(c => c.currentStatus === 'taken_down'),
+    failed: trackedCases.filter(c => c.currentStatus === 'failed'),
+  };
 
   return (
     <div className="py-6 sm:py-8 relative overflow-hidden">

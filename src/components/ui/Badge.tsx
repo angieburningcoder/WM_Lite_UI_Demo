@@ -47,7 +47,10 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
     detected: { label: '偵測中', color: 'bg-slate-600 text-white border-slate-400' },
     scheduled: { label: '已排程', color: 'bg-rose-600 text-white border-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.4)]' },
     submitted: { label: '已送件', color: 'bg-blue-600 text-white border-blue-400 shadow-[0_0_10px_rgba(37,99,235,0.4)]' },
-    resolved: { label: '已下架成功', color: 'bg-green-600 text-white border-green-400 shadow-[0_0_10px_rgba(22,163,74,0.4)]' },
+    accepted: { label: '已受理', color: 'bg-violet-600 text-white border-violet-400 shadow-[0_0_10px_rgba(124,58,237,0.4)]' },
+    success: { label: '下架成功', color: 'bg-green-600 text-white border-green-400 shadow-[0_0_10px_rgba(22,163,74,0.4)]' },
+    failed: { label: '申請失敗', color: 'bg-rose-800 text-white border-rose-600 shadow-[0_0_10px_rgba(159,18,57,0.4)]' },
+    taken_down: { label: '已確認下架', color: 'bg-amber-600 text-white border-amber-400 shadow-[0_0_10px_rgba(217,119,6,0.4)]' },
     monitoring: { label: '監控中', color: 'bg-purple-600 text-white border-purple-400 shadow-[0_0_10px_rgba(147,51,234,0.4)]' },
   };
 

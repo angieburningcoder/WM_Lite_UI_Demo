@@ -71,8 +71,8 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-15T09:23:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-15T09:45:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-15T10:00:00+08:00', completed: true },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '', completed: false },
+      { status: 'success', label: '下架成功', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -146,8 +146,8 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-14T14:30:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-14T15:00:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-14T15:30:00+08:00', completed: true },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '2024-01-14T15:30:00+08:00', completed: true },
+      { status: 'success', label: '下架成功', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -204,9 +204,9 @@ export const cases: Case[] = [
     followers: 856,
     discoveredAt: '2024-01-13T11:00:00+08:00',
     riskLevel: 'M',
-    currentStatus: 'scheduled',
-    currentStatusLabel: '已排程',
-    lastUpdatedAt: '2024-01-13T12:00:00+08:00',
+    currentStatus: 'success',
+    currentStatusLabel: '下架成功',
+    lastUpdatedAt: '2024-01-15T08:00:00+08:00',
     reasons: [
       '帳號名稱包含您的英文名「pinan」',
       '部分貼文轉載您的公開內容',
@@ -215,8 +215,8 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-13T11:00:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-13T11:30:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-13T12:00:00+08:00', completed: false },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '2024-01-13T12:00:00+08:00', completed: true },
+      { status: 'success', label: '下架成功', timestamp: '2024-01-15T08:00:00+08:00', completed: true },
     ],
     recommendedActions: [
       {
@@ -278,8 +278,8 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-12T16:45:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-12T17:00:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '', completed: false },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '', completed: false },
+      { status: 'success', label: '下架成功', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -309,8 +309,8 @@ export const cases: Case[] = [
     followers: 2100,
     discoveredAt: '2024-01-11T09:15:00+08:00',
     riskLevel: 'M',
-    currentStatus: 'resolved',
-    currentStatusLabel: '已下架成功',
+    currentStatus: 'taken_down',
+    currentStatusLabel: '已確認下架',
     lastUpdatedAt: '2024-01-14T09:00:00+08:00',
     reasons: [
       '以「粉絲團」名義建立，但未標明非官方',
@@ -320,8 +320,8 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-11T09:15:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-11T10:00:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-11T10:30:00+08:00', completed: true },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '2024-01-11T10:30:00+08:00', completed: true },
+      { status: 'taken_down', label: '已確認下架', timestamp: '2024-01-14T09:00:00+08:00', completed: true },
     ],
     recommendedActions: [
       {
@@ -373,8 +373,8 @@ export const cases: Case[] = [
     followers: 156,
     discoveredAt: '2024-01-10T20:30:00+08:00',
     riskLevel: 'H',
-    currentStatus: 'submitted',
-    currentStatusLabel: '已送件',
+    currentStatus: 'accepted',
+    currentStatusLabel: '已受理',
     lastUpdatedAt: '2024-01-12T22:00:00+08:00',
     reasons: [
       '以「備用帳號」名義建立，暗示與您有關',
@@ -385,8 +385,9 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-10T20:30:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-10T21:00:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '2024-01-10T21:30:00+08:00', completed: true },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '2024-01-10T21:30:00+08:00', completed: true },
+      { status: 'accepted', label: '已受理', timestamp: '2024-01-12T22:00:00+08:00', completed: true },
+      { status: 'success', label: '下架成功', timestamp: '', completed: false },
     ],
     recommendedActions: [
       {
@@ -432,9 +433,10 @@ export const cases: Case[] = [
     followers: 3200,
     discoveredAt: '2024-01-09T15:00:00+08:00',
     riskLevel: 'M',
-    currentStatus: 'scheduled',
-    currentStatusLabel: '已排程',
-    lastUpdatedAt: '2024-01-09T16:00:00+08:00',
+    currentStatus: 'failed',
+    currentStatusLabel: '申請失敗',
+    failedReason: '平台認定不符合冒充帳號標準',
+    lastUpdatedAt: '2024-01-12T14:00:00+08:00',
     reasons: [
       '使用「official」官方字樣',
       '貼文內容轉載自您的其他平台',
@@ -443,8 +445,8 @@ export const cases: Case[] = [
     statusTimeline: [
       { status: 'detected', label: '偵測發現', timestamp: '2024-01-09T15:00:00+08:00', completed: true },
       { status: 'scheduled', label: '已排程', timestamp: '2024-01-09T16:00:00+08:00', completed: true },
-      { status: 'submitted', label: '申請已提交', timestamp: '', completed: false },
-      { status: 'resolved', label: '已解決', timestamp: '', completed: false },
+      { status: 'submitted', label: '已送件', timestamp: '2024-01-10T10:00:00+08:00', completed: true },
+      { status: 'failed', label: '申請失敗', timestamp: '2024-01-12T14:00:00+08:00', completed: true },
     ],
     recommendedActions: [
       {
@@ -777,7 +779,7 @@ export function getCasesByRiskLevel(level: 'H' | 'M' | 'L' | 'all'): Case[] {
 // Helper: get highest priority case (H first, unresolved first, newest first)
 export function getHighestPriorityCase(casesArr: Case[]): Case | undefined {
   const riskOrder: Record<string, number> = { H: 0, M: 1, L: 2 };
-  const resolvedStatuses: CaseStatus[] = ['resolved', 'monitoring'];
+  const resolvedStatuses: CaseStatus[] = ['success', 'failed', 'taken_down', 'monitoring'];
   return [...casesArr].sort((a, b) => {
     // Unresolved first
     const aResolved = resolvedStatuses.includes(a.currentStatus) ? 1 : 0;

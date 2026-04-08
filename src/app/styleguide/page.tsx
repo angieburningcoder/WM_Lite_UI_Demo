@@ -10,7 +10,7 @@ export default function StyleGuidePage() {
     { status: 'detected' as const, label: '偵測發現', timestamp: '2024-01-15T09:23:00+08:00', completed: true },
     { status: 'scheduled' as const, label: '已排程', timestamp: '2024-01-15T09:45:00+08:00', completed: true },
     { status: 'submitted' as const, label: '已送件', timestamp: '2024-01-15T10:00:00+08:00', completed: true },
-    { status: 'resolved' as const, label: '已解決', timestamp: '', completed: false },
+    { status: 'success' as const, label: '下架成功', timestamp: '', completed: false },
   ];
 
   return (
@@ -229,7 +229,10 @@ export default function StyleGuidePage() {
                   <StatusBadge status="detected" />
                   <StatusBadge status="scheduled" />
                   <StatusBadge status="submitted" />
-                  <StatusBadge status="resolved" />
+                  <StatusBadge status="success" />
+                  <StatusBadge status="accepted" />
+                  <StatusBadge status="failed" />
+                  <StatusBadge status="taken_down" />
                   <StatusBadge status="monitoring" />
                 </div>
               </div>

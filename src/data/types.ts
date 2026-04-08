@@ -2,7 +2,7 @@
 
 export type RiskLevel = 'H' | 'M' | 'L';
 export type Platform = 'Instagram' | 'Facebook' | 'Threads';
-export type CaseStatus = 'detected' | 'scheduled' | 'submitted' | 'resolved' | 'monitoring';
+export type CaseStatus = 'detected' | 'scheduled' | 'submitted' | 'accepted' | 'success' | 'failed' | 'taken_down' | 'monitoring';
 export type NotificationFrequency = 'immediate' | 'daily' | 'weekly';
 export type DelegationPreference = 'self_only' | 'delegate_when_needed';
 
@@ -61,6 +61,7 @@ export interface Case {
   riskLevel: RiskLevel;
   currentStatus: CaseStatus;
   currentStatusLabel: string;
+  failedReason?: string;
   lastUpdatedAt: string;
   reasons: string[];
   statusTimeline: StatusTimelineItem[];
