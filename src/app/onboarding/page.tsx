@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, Plus, X, ChevronRight, ChevronLeft, Shield, Upload, FileText, Sparkles, Download, AlertCircle, Camera, Loader2, XCircle, ChevronDown } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
@@ -52,6 +52,7 @@ export default function OnboardingPage() {
   const [tmDatabaseUrl, setTmDatabaseUrl] = useState('');
   const [tmStatus, setTmStatus] = useState<'registered' | 'pending'>('registered');
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [activating, setActivating] = useState<'idle' | 'launching' | 'done'>('idle');
 
   const suggestions = useMemo(() => {
     const result: string[] = [];
@@ -137,11 +138,73 @@ export default function OnboardingPage() {
       trademarks,
       privacyConsentAccepted: privacyConsent,
     });
-    router.push('/dashboard');
+    setActivating('launching');
+    setTimeout(() => setActivating('done'), 2200);
+    setTimeout(() => router.push('/dashboard'), 4000);
   };
 
   return (
     <div className="py-8 sm:py-12">
+
+      {/* Rocket activation overlay */}
+      {activating !== 'idle' && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md">
+          <div className="flex flex-col items-center gap-6 text-center px-6">
+
+            {/* Rocket */}
+            <div className={cn(
+              'text-7xl select-none transition-all duration-700',
+              activating === 'launching'
+                ? 'animate-[rocketLaunch_0.6s_ease-in-out_infinite_alternate]'
+                : 'translate-y-[-60px] scale-110 opacity-0'
+            )}>
+              🚀
+            </div>
+
+            {activating === 'launching' && (
+              <div className="space-y-3">
+                <p className="text-xl font-black text-white">正在啟動你的帳號守護！</p>
+                {/* Loading dots */}
+                <div className="flex items-center justify-center gap-1.5">
+                  {[0, 1, 2].map(i => (
+                    <div
+                      key={i}
+                      className="w-2 h-2 rounded-full bg-cyan-400"
+                      style={{ animation: `bounce 0.8s ease-in-out ${i * 0.15}s infinite alternate` }}
+                    />
+                  ))}
+                </div>
+                <p className="text-slate-400 text-sm">設定監控參數中...</p>
+              </div>
+            )}
+
+            {activating === 'done' && (
+              <div className="space-y-3 animate-[fadeInUp_0.5s_ease-out_forwards]">
+                <div className="text-5xl">✅</div>
+                <p className="text-2xl font-black text-white">啟動完成！</p>
+                <p className="text-slate-300 text-base leading-relaxed max-w-xs">
+                  Watchmen Lite 正在開始守護<br />你的品牌與帳號 🛡️
+                </p>
+                <p className="text-slate-500 text-xs">即將帶你前往儀表板...</p>
+              </div>
+            )}
+
+          </div>
+
+          <style>{`
+            @keyframes rocketLaunch {
+              0%   { transform: translateY(0px) rotate(-8deg); }
+              50%  { transform: translateY(-18px) rotate(8deg); }
+              100% { transform: translateY(-8px) rotate(-4deg); }
+            }
+            @keyframes fadeInUp {
+              from { opacity: 0; transform: translateY(20px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+        </div>
+      )}
+
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="text-center mb-8">
