@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FolderOpen, ChevronRight, Clock, ChevronLeft } from 'lucide-react';
+import { ArrowLeft, FolderOpen, ChevronRight, Clock, ChevronLeft, Info } from 'lucide-react';
 import { RiskBadge, PlatformBadge, StatusBadge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/Skeleton';
 import { cases } from '@/data/mockData';
@@ -88,7 +88,15 @@ export default function CasesPage() {
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">Case Tracker</h1>
         </div>
-        <p className="text-slate-400 text-base mb-6">追蹤排程 · 送件 · 下架進度</p>
+        <p className="text-slate-400 text-base mb-4">追蹤排程 · 送件 · 下架進度</p>
+
+        {/* Data Retention Notice */}
+        <div className="flex items-start gap-2.5 mb-6 p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+          <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Case Tracker 僅顯示<span className="font-semibold text-slate-300"> 本月內</span>的立案紀錄。超過一個月的案件將自動移除，如需查詢歷史紀錄請聯繫 Watchmen 團隊。
+          </p>
+        </div>
 
         {allTracked.length === 0 ? (
           <EmptyState

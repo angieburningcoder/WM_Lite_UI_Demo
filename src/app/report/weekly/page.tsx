@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Activity, Calendar, CheckCircle, ChevronRight, FileText, Hash, BarChart2 } from 'lucide-react';
+import { ArrowLeft, Activity, Calendar, CheckCircle, ChevronRight, FileText, Hash, BarChart2, Clock } from 'lucide-react';
 import { TrendChart } from '@/components/charts/TrendChart';
 import { RiskBadge, PlatformBadge } from '@/components/ui/Badge';
 import { PageSkeleton } from '@/components/ui/Skeleton';
@@ -154,7 +154,15 @@ export default function ReportsCenterPage() {
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">Reports Center</h1>
         </div>
-        <p className="text-slate-400 text-base mb-8">偵測數據 · 趨勢分析 · 排程案件總覽</p>
+        <p className="text-slate-400 text-base mb-4">偵測數據 · 趨勢分析 · 排程案件總覽</p>
+
+        {/* Data Retention Notice */}
+        <div className="flex items-start gap-2.5 mb-6 p-3.5 rounded-xl bg-amber-500/8 border border-amber-500/20">
+          <Clock className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-200/70 leading-relaxed">
+            Reports Center 僅保留<span className="font-semibold text-amber-300"> 當月資料</span>，超過一個月的報告將自動刪除，無法回溯查詢。自訂查詢範圍也僅限於當月內。
+          </p>
+        </div>
 
         {/* Time Range Selector */}
         <div className="mb-8 p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
@@ -194,6 +202,10 @@ export default function ReportsCenterPage() {
                 className="flex-1 bg-slate-900/80 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors [color-scheme:dark]"
               />
             </div>
+          )}
+
+          {rangeType === 'custom' && (
+            <p className="text-xs text-amber-400/60 mt-2">僅限當月範圍內，跨月資料不予顯示</p>
           )}
 
           {/* Current range display */}
