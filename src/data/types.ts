@@ -6,6 +6,15 @@ export type CaseStatus = 'detected' | 'scheduled' | 'submitted' | 'accepted' | '
 export type NotificationFrequency = 'immediate' | 'daily' | 'weekly';
 export type DelegationPreference = 'self_only' | 'delegate_when_needed';
 
+export interface TrademarkInfo {
+  nameChinese: string;
+  nameEnglish: string;
+  registrationTerritory: string;
+  registrationNumber: string;
+  databaseUrl: string;
+  status: 'registered' | 'pending';
+}
+
 export interface UserProfile {
   displayName: string;
   chineseName: string;
@@ -22,6 +31,7 @@ export interface UserProfile {
   onboardingCompletedAt?: string;
   loaUploaded?: boolean;
   trademarkProvided?: boolean;
+  trademarks?: TrademarkInfo[];
   privacyConsentAccepted?: boolean;
 }
 

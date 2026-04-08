@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Plus, X, ChevronRight, ChevronLeft, Shield, Upload, FileText, Sparkles, Download, AlertCircle, Camera, Loader2, XCircle } from 'lucide-react';
+import { Check, Plus, X, ChevronRight, ChevronLeft, Shield, Upload, FileText, Sparkles, Download, AlertCircle, Camera, Loader2, XCircle, ChevronDown } from 'lucide-react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
-import { Platform } from '@/data/types';
+import { Platform, TrademarkInfo } from '@/data/types';
 import { cn } from '@/lib/utils';
 import { defaultUserProfile } from '@/data/mockData';
 
@@ -43,7 +43,14 @@ export default function OnboardingPage() {
   const [loaDownloaded, setLoaDownloaded] = useState(false);
   const [loaFileName, setLoaFileName] = useState('');
   const [loaComplianceStatus, setLoaComplianceStatus] = useState<'idle' | 'checking' | 'passed' | 'failed'>('idle');
-  const [trademarkProvided, setTrademarkProvided] = useState(false);
+  const [trademarks, setTrademarks] = useState<TrademarkInfo[]>([]);
+  const [trademarkExpanded, setTrademarkExpanded] = useState(false);
+  const [tmNameChinese, setTmNameChinese] = useState('');
+  const [tmNameEnglish, setTmNameEnglish] = useState('');
+  const [tmTerritory, setTmTerritory] = useState('');
+  const [tmNumber, setTmNumber] = useState('');
+  const [tmDatabaseUrl, setTmDatabaseUrl] = useState('');
+  const [tmStatus, setTmStatus] = useState<'registered' | 'pending'>('registered');
   const [privacyConsent, setPrivacyConsent] = useState(false);
 
   const suggestions = useMemo(() => {
@@ -80,6 +87,24 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleAddTrademark = () => {
+    if (!tmNameChinese.trim() && !tmNameEnglish.trim()) return;
+    setTrademarks([...trademarks, {
+      nameChinese: tmNameChinese.trim(),
+      nameEnglish: tmNameEnglish.trim(),
+      registrationTerritory: tmTerritory.trim(),
+      registrationNumber: tmNumber.trim(),
+      databaseUrl: tmDatabaseUrl.trim(),
+      status: tmStatus,
+    }]);
+    setTmNameChinese('');
+    setTmNameEnglish('');
+    setTmTerritory('');
+    setTmNumber('');
+    setTmDatabaseUrl('');
+    setTmStatus('registered');
+  };
+
   const handleTogglePlatform = (p: Platform) => {
     setPlatforms(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
   };
@@ -108,7 +133,8 @@ export default function OnboardingPage() {
       hasCompletedOnboarding: true,
       onboardingCompletedAt: new Date().toISOString(),
       loaUploaded,
-      trademarkProvided,
+      trademarkProvided: trademarks.length > 0,
+      trademarks,
       privacyConsentAccepted: privacyConsent,
     });
     router.push('/dashboard');
@@ -578,25 +604,142 @@ export default function OnboardingPage() {
 
               {/* ── Trademark (optional) ── */}
               <div className="space-y-2">
-                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">商標 / 版權資料（選填）</p>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">商標資料（選填）</p>
+
+                {/* Header toggle */}
                 <div
-                  onClick={() => setTrademarkProvided(!trademarkProvided)}
+                  onClick={() => setTrademarkExpanded(!trademarkExpanded)}
                   className={cn(
                     'flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all',
-                    trademarkProvided
+                    trademarks.length > 0
                       ? 'border-emerald-500 bg-emerald-950/30'
-                      : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
+                      : trademarkExpanded
+                        ? 'border-cyan-500/50 bg-slate-800/50'
+                        : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
                   )}
                 >
-                  <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0', trademarkProvided ? 'bg-emerald-500/20' : 'bg-slate-700/50')}>
-                    <FileText className={cn('w-5 h-5', trademarkProvided ? 'text-emerald-400' : 'text-slate-500')} />
+                  <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0', trademarks.length > 0 ? 'bg-emerald-500/20' : 'bg-slate-700/50')}>
+                    <FileText className={cn('w-5 h-5', trademarks.length > 0 ? 'text-emerald-400' : 'text-slate-500')} />
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-white text-sm">商標或版權文件</p>
-                    <p className="text-xs text-slate-400 mt-0.5">有助於強化申訴效力（非必填）</p>
+                    <p className="font-bold text-white text-sm">商標資料</p>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {trademarks.length > 0 ? `已新增 ${trademarks.length} 筆商標` : '有助於強化申訴效力（非必填）'}
+                    </p>
                   </div>
-                  {trademarkProvided ? <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" /> : <Plus className="w-4 h-4 text-slate-500 flex-shrink-0" />}
+                  {trademarks.length > 0
+                    ? <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    : <ChevronDown className={cn('w-4 h-4 text-slate-500 flex-shrink-0 transition-transform', trademarkExpanded && 'rotate-180')} />
+                  }
                 </div>
+
+                {/* Expanded form */}
+                {trademarkExpanded && (
+                  <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-700/60 space-y-4">
+
+                    {/* Existing trademark entries */}
+                    {trademarks.length > 0 && (
+                      <div className="space-y-2">
+                        {trademarks.map((tm, i) => (
+                          <div key={i} className="flex items-start gap-3 px-4 py-3 bg-slate-800 rounded-2xl border border-slate-600">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white text-sm font-bold">
+                                {tm.nameChinese || tm.nameEnglish}
+                                {tm.nameChinese && tm.nameEnglish && <span className="text-slate-400 font-normal"> / {tm.nameEnglish}</span>}
+                              </p>
+                              <p className="text-slate-400 text-xs mt-0.5">
+                                {[tm.registrationTerritory, tm.registrationNumber].filter(Boolean).join('・')}
+                                {tm.status === 'registered'
+                                  ? <span className="ml-2 text-emerald-400">已註冊</span>
+                                  : <span className="ml-2 text-amber-400">申請中</span>
+                                }
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => setTrademarks(trademarks.filter((_, idx) => idx !== i))}
+                              className="hover:text-rose-400 transition-colors flex-shrink-0 text-slate-500 bg-white/10 rounded-full p-0.5 hover:bg-white/20 mt-0.5"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add new trademark form */}
+                    <div className="space-y-3">
+                      <p className="text-xs font-bold text-slate-400">新增商標</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="text"
+                          value={tmNameChinese}
+                          onChange={e => setTmNameChinese(e.target.value)}
+                          className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                          placeholder="商標名稱（中文）"
+                        />
+                        <input
+                          type="text"
+                          value={tmNameEnglish}
+                          onChange={e => setTmNameEnglish(e.target.value)}
+                          className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                          placeholder="商標名稱（英文）"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="text"
+                          value={tmTerritory}
+                          onChange={e => setTmTerritory(e.target.value)}
+                          className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                          placeholder="商標註冊地（例如：台灣）"
+                        />
+                        <input
+                          type="text"
+                          value={tmNumber}
+                          onChange={e => setTmNumber(e.target.value)}
+                          className="px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                          placeholder="商標註冊號碼"
+                        />
+                      </div>
+                      <input
+                        type="url"
+                        value={tmDatabaseUrl}
+                        onChange={e => setTmDatabaseUrl(e.target.value)}
+                        className="w-full px-3 py-2.5 border border-slate-700 bg-slate-900/60 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 placeholder-slate-500"
+                        placeholder="官方商標資料庫連結（例如 TIPO cloud）"
+                      />
+                      <div className="flex items-center gap-3">
+                        <p className="text-sm text-slate-400 flex-shrink-0">商標狀態</p>
+                        <div className="flex gap-2">
+                          {(['registered', 'pending'] as const).map(s => (
+                            <button
+                              key={s}
+                              onClick={() => setTmStatus(s)}
+                              className={cn(
+                                'px-3 py-1.5 rounded-xl text-xs font-bold border transition-all',
+                                tmStatus === s
+                                  ? s === 'registered'
+                                    ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300'
+                                    : 'border-amber-500 bg-amber-950/40 text-amber-300'
+                                  : 'border-slate-700 bg-slate-800/30 text-slate-400 hover:border-slate-500'
+                              )}
+                            >
+                              {s === 'registered' ? '已註冊' : '申請中'}
+                            </button>
+                          ))}
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={handleAddTrademark}
+                          disabled={!tmNameChinese.trim() && !tmNameEnglish.trim()}
+                          className="ml-auto rounded-xl text-xs py-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> 新增
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <p className="text-xs text-slate-600 text-center">Demo 模式・檔案不會實際上傳至伺服器</p>
@@ -651,7 +794,7 @@ export default function OnboardingPage() {
                 <p className="text-slate-300"><span className="text-slate-500">監測關鍵字：</span>{keywords.length} 組</p>
                 <p className="text-slate-300"><span className="text-slate-500">監測平台：</span>{platforms.join('、') || '未選擇'}</p>
                 <p className="text-slate-300"><span className="text-slate-500">LOA 授權書：</span>{loaUploaded ? '已上傳 ✓' : '未上傳'}</p>
-                <p className="text-slate-300"><span className="text-slate-500">商標資料：</span>{trademarkProvided ? '已提供 ✓' : '未提供'}</p>
+                <p className="text-slate-300"><span className="text-slate-500">商標資料：</span>{trademarks.length > 0 ? `${trademarks.length} 筆 ✓` : '未提供'}</p>
               </div>
               <Button onClick={handleComplete} size="lg" className="w-full shadow-lg shadow-cyan-500/20">
                 進入儀表板
