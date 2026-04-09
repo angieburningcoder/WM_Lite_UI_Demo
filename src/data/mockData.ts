@@ -11,7 +11,7 @@ export const defaultUserProfile: UserProfile = {
   monitoredKeywords: ['陳品安', 'Pin-An Chen', 'pinan_official'],
   platforms: ['Instagram', 'Facebook'],
   timezone: 'Asia/Taipei',
-  notificationFrequency: 'daily',
+  notificationFrequency: 'weekly',
   delegationPreference: 'delegate_when_needed',
   hasCompletedOnboarding: false,
   loaUploaded: false,

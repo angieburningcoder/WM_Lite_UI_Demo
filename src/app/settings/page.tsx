@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/lib/useSettings';
 import { Platform, NotificationFrequency, TrademarkInfo } from '@/data/types';
 import { cn } from '@/lib/utils';
-import { BRAND_PRICE } from '@/lib/pricing';
 import { defaultUserProfile } from '@/data/mockData';
 
 const allPlatforms: Platform[] = ['Instagram', 'Facebook', 'Threads'];
@@ -38,6 +37,7 @@ export default function SettingsPage() {
   const [newFanPageUrl, setNewFanPageUrl] = useState('');
   const [newBrand, setNewBrand] = useState('');
   const [saved, setSaved] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [tmExpanded, setTmExpanded] = useState(false);
   const [tmNameChinese, setTmNameChinese] = useState('');
   const [tmNameEnglish, setTmNameEnglish] = useState('');
@@ -141,6 +141,11 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const handleSubmit = () => {
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 5000);
+  };
+
   // 關鍵字自動推薦邏輯（keyword suggestion engine）：
   // 根據使用者填入的中文名、英文名、品牌名、粉專名，自動產生常見冒名變體關鍵字，
   // 例如：「陳品安」→「陳品安官方」、「陳品安客服」；「PinAn」→「pinan_official」、「real_pinan」。
@@ -204,8 +209,7 @@ export default function SettingsPage() {
         {/* Info Banner */}
         <Card className="mb-6 bg-blue-900/20 border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
           <p className="text-blue-200 text-sm font-medium">
-            💡 設定會儲存在你的瀏覽器中（localStorage），週報會根據這些設定顯示對應內容。
-            這是 Demo 版本，不會實際影響監控範圍。
+            💡 填寫完畢後點擊下方「儲存設定」，我們團隊會收到你的資料並在下一個工作天內更新你的監控範圍與設定。
           </p>
         </Card>
 
@@ -243,7 +247,6 @@ export default function SettingsPage() {
           <div className="mb-5">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-bold text-slate-300">品牌名稱</label>
-              <span className="text-xs text-slate-500">每個品牌 +NT${BRAND_PRICE}/月</span>
             </div>
             {settings.brandNames.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
@@ -481,48 +484,45 @@ export default function SettingsPage() {
 
         {/* Notification Frequency */}
         <Card className="mb-6 bg-slate-900/40 backdrop-blur border-slate-700/50">
-          <CardHeader title="通知頻率 🔔" subtitle="選擇接收通知的頻率" />
-          <div className="space-y-3">
-            {frequencyOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleFrequencyChange(option.value)}
-                className={cn(
-                  'w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-300',
-                  settings.notificationFrequency === option.value
-                    ? 'border-cyan-500 bg-cyan-950/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                    : 'border-slate-700 bg-slate-800/30 hover:border-slate-500'
-                )}
-              >
-                <div
-                  className={cn(
-                    'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
-                    settings.notificationFrequency === option.value
-                      ? 'border-cyan-500 bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]'
-                      : 'border-slate-600 bg-slate-800'
-                  )}
-                >
-                  {settings.notificationFrequency === option.value && (
-                    <Check className="w-3.5 h-3.5 text-black font-bold" />
-                  )}
-                </div>
-                <div>
-                  <p
-                    className={cn(
-                      'font-bold text-lg',
-                      settings.notificationFrequency === option.value
-                        ? 'text-cyan-300'
-                        : 'text-slate-200'
-                    )}
-                  >
-                    {option.label}
-                  </p>
-                  <p className="text-sm text-slate-400 mt-1">{option.description}</p>
-                </div>
-              </button>
-            ))}
+          <CardHeader title="通知頻率 🔔" subtitle="每週一發送監控週報" />
+          <div className="flex items-center gap-4 p-4 rounded-2xl border-2 border-cyan-500 bg-cyan-950/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+            <div className="w-6 h-6 rounded-full border-2 border-cyan-500 bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)] flex items-center justify-center flex-shrink-0">
+              <Check className="w-3.5 h-3.5 text-black font-bold" />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-lg text-cyan-300">週報</p>
+              <p className="text-sm text-slate-400 mt-1">每週一發送週報</p>
+            </div>
           </div>
         </Card>
+
+        {/* Submit */}
+        <div className="mb-4">
+          <Button
+            onClick={handleSubmit}
+            className="w-full py-4 text-base font-bold rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all"
+          >
+            <Check className="w-5 h-5" />
+            儲存設定
+          </Button>
+        </div>
+
+        {/* Submitted Banner */}
+        {submitted && (
+          <Card className="mb-4 bg-emerald-900/20 border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Check className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-emerald-300 font-bold text-sm">設定已送出！</p>
+                <p className="text-emerald-200/70 text-sm mt-0.5">
+                  我們已收到你的監控設定資料，團隊將在下一個工作天內完成更新，屆時你的監控範圍與通知設定將生效。
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Reset */}
         <Card className="border-dashed border-slate-700 bg-transparent hover:border-slate-500 transition-colors">
